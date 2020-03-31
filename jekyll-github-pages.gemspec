@@ -3,7 +3,7 @@ Gem::Specification.new do |s|
   s.version = "1.0.0"
   s.summary = 'A gem that uses the github API to make edits with a jekyll blog'
   s.files = Dir['*', 'lib/**/*']
-  s.require_paths = ["lib/*"]
+  s.require_paths = ["lib"]
   s.licenses = ["MIT"]
   s.authors= ['MSOE SSE Web Team']
 end
