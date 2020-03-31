@@ -1,5 +1,5 @@
 require 'rubygems'
-
+require 'gemspec'
 gem 'kramdown'
 
 
