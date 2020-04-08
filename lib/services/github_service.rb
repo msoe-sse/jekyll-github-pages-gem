@@ -214,10 +214,6 @@ module Services
     end
 
     private
-      def full_repo_name
-        "#{@full_repo_name}"
-      end
-
       def create_post_from_api_response(post, ref)
         # Base64.decode64 will convert our string into a ASCII string
         # calling force_encoding('UTF-8') will fix that problem
