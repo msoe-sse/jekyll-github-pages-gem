@@ -9,9 +9,10 @@ module Services
   class GithubService
 
 
-    def initialize(github_username, github_password)
+    def initialize(github_username, github_password, full_repo_name)
       @github_username = github_username
       @github_pwd = github_password
+      @full_repo_name = full_repo_name
       @kramdown_service = Services::KramdownService.new
       @post_factory = Factories::PostFactory.new
     end
@@ -192,10 +193,9 @@ module Services
     # Params:
     # +ref_name+:: the name of the branch to create if necessary
     # +master_head_sha+:: the sha representing the head of master
-    def create_ref_if_necessary(ref_name, master_head_sha, full_repo_name)
+    def create_ref_if_necessary(ref_name, master_head_sha)
       client = create_octokit_client
       client.ref(full_repo_name, ref_name)
-      @full_repo_name = full_repo_name
       rescue Octokit::NotFound
         client.create_ref(full_repo_name, ref_name, master_head_sha)
     end
