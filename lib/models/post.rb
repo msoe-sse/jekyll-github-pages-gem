@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ##
 # An object representing an image that is on a post
 class PostImage
@@ -5,7 +7,7 @@ class PostImage
   # The binary contents of an image as a Base64 string
   attr_accessor :contents
 end
-  
+
 ##
 # An object representing a post on the SG website
 class Post
@@ -21,7 +23,7 @@ class Post
   # whether a post is in PR or not
   attr_accessor :github_ref
   attr_accessor :images
-  
+
   def initialize
     @images = []
   end

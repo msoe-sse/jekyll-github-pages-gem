@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Services
   ##
   # This class is responsible for editing posts that are in PR on the SG website
@@ -21,7 +23,7 @@ module Services
 
       new_tree_sha = create_new_tree(post_markdown, post_title, existing_post_file_path, sha_base_tree)
       @github_service.commit_and_push_to_repo("Edited post #{post_title}", new_tree_sha, ref, ref_name)
-        
+
       PostImageManager.instance.clear
     end
   end

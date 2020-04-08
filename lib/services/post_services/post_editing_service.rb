@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Services
   ##
   # This class is responsible for editing posts on the SG website
@@ -18,7 +20,7 @@ module Services
     # +existing_post_file_path+::the file path to the existing post on GitHub
     def edit_post(post_markdown, post_title, existing_post_file_path, pull_request_body, reviewers)
       # This ref_name variable represents the branch name
-      # for editing a post. At the end we strip out all of the whitespace in 
+      # for editing a post. At the end we strip out all of the whitespace in
       # the post_title to create a valid branch name
       branch_name = "editPost#{post_title.gsub(/\s+/, '')}"
       ref_name = "heads/#{branch_name}"
@@ -30,10 +32,10 @@ module Services
       new_tree_sha = create_new_tree(post_markdown, post_title, existing_post_file_path, sha_base_tree)
 
       @github_service.commit_and_push_to_repo("Edited post #{post_title}", new_tree_sha, master_head_sha, ref_name)
-      @github_service.create_pull_request(branch_name, 'master', "Edited Post #{post_title}", 
-                                          pull_request_body, 
+      @github_service.create_pull_request(branch_name, 'master', "Edited Post #{post_title}",
+                                          pull_request_body,
                                           [reviewers])
-        
+
       PostImageManager.instance.clear
     end
   end

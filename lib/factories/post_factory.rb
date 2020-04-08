@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative '../models/post'
 
 module Factories
@@ -9,16 +11,19 @@ module Factories
 
     ##
     # This method parses markdown in a post a returns a post model
-    # 
+    #
     # Params:
     # +post_contents+::markdown in a given post
     # +file_path+::the path on GitHub to the post
     # +ref+::a sha for a ref indicating the head of a branch a post is pushed to on the GitHub server
-    def create_post(post_contents, file_path, ref)      
-      return create_post_model(post_contents, file_path, ref) if !post_contents.nil? && post_contents.is_a?(String)
+    def create_post(post_contents, file_path, ref)
+      if !post_contents.nil? && post_contents.is_a?(String)
+        create_post_model(post_contents, file_path, ref)
+      end
     end
 
-  private
+    private
+
     def parse_tags(header)
       result = []
       header.lines.each do |line|
@@ -40,7 +45,7 @@ module Factories
       # correctly and the third group is the actual post contents
       match_obj = post_contents.match(/---(.*)---(\r\n|\r|\n)(.*)/m)
       header = match_obj.captures[0]
-      
+
       parse_post_header(header, result)
       result.contents = match_obj.captures[2]
                                  .remove("#{LEAD}\r\n")

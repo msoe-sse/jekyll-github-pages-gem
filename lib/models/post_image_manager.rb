@@ -1,10 +1,12 @@
+# frozen_string_literal: true
+
 require 'singleton'
 
 ##
 # A singleton class for managing all image attachments for a post
 class PostImageManager
   include Singleton
-  
+
   attr_reader :uploaders
   attr_reader :downloaded_images
 
@@ -41,7 +43,7 @@ class PostImageManager
   # Clears the manager of all currently exisiting image uploaders and delete's their cache directories.
   # Also clears the manager of all of the downloaded images
   def clear
-    @uploaders.each do |uploader| 
+    @uploaders.each do |uploader|
       full_preview_path = "#{Rails.root}/public/uploads/tmp/#{uploader.preview.cache_name}"
       cache_dir = File.expand_path('..', full_preview_path)
       uploader.remove!

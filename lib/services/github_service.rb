@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'octokit'
 require 'base64'
 require 'date'
@@ -7,8 +9,6 @@ module Services
   ##
   # This class contains all operations involving interacting with the GitHub API
   class GithubService
-
-
     def initialize(github_username, github_password, full_repo_name)
       @github_username = github_username
       @github_pwd = github_password
@@ -22,7 +22,6 @@ module Services
       @kramdown_service = Services::KramdownService.new
       @post_factory = Factories::PostFactory.new
     end
-
 
     ##
     # This method fetches all the markdown contents of all the posts on the SG website
@@ -38,13 +37,13 @@ module Services
         image_paths = @kramdown_service.get_all_image_paths(post_model.contents)
 
         images = []
-        image_paths.each do | image_path |
+        image_paths.each do |image_path|
           image_content = client.contents(@full_repo_name, path: image_path)
           images << create_post_image(image_path, image_content.content)
         end
 
         post_model.images = images
-        
+
         result << post_model
       end
       result
@@ -56,13 +55,13 @@ module Services
       result = []
       client = create_octokit_client
       pull_requests_for_user = get_open_post_editor_pull_requests
-      
-      pull_requests_for_user.each do | pull_request |
+
+      pull_requests_for_user.each do |pull_request|
         pull_request_files = client.pull_request_files(@full_repo_name, pull_request[:number])
 
         post = nil
         images = []
-        pull_request_files.each do | pull_request_file |
+        pull_request_files.each do |pull_request_file|
           contents_url_params = CGI.parse(pull_request_file[:contents_url])
 
           # The CGI.parse method returns a hash with the key being the URL and the value being an array of
@@ -83,19 +82,19 @@ module Services
       end
       result
     end
-    
+
     ##
     # This method fetches a single post from the SG website given a post title
     # and returns a Post model
-    # 
+    #
     # Params:
     # +title+:: A title of a SSE website post
     # +ref+::a sha for a ref indicating the head of a branch a post is pushed to on the GitHub server
     def get_post_by_title(title, ref)
       result = nil
       result = get_all_posts_in_pr.find { |x| x.title == title } if ref
-      result = get_all_posts.find { |x| x.title == title } if !ref
-      result.images.each { |x| PostImageManager.instance.add_downloaded_image(x) } if result
+      result = get_all_posts.find { |x| x.title == title } unless ref
+      result&.images&.each { |x| PostImageManager.instance.add_downloaded_image(x) }
       result
     end
 
@@ -148,7 +147,7 @@ module Services
       client = create_octokit_client
       blob_information = []
       file_information.each do |file|
-        # This mode property on this hash represents the file mode for a GitHub tree. 
+        # This mode property on this hash represents the file mode for a GitHub tree.
         # The mode is 100644 for a file blob. See https://developer.github.com/v3/git/trees/ for more information
         blob_information << { path: file[:path],
                               mode: '100644',
@@ -196,8 +195,8 @@ module Services
     def create_ref_if_necessary(ref_name, master_head_sha)
       client = create_octokit_client
       client.ref(@full_repo_name, ref_name)
-      rescue Octokit::NotFound
-        client.create_ref(@full_repo_name, ref_name, master_head_sha)
+    rescue Octokit::NotFound
+      client.create_ref(@full_repo_name, ref_name, master_head_sha)
     end
 
     ##
@@ -210,40 +209,41 @@ module Services
     def get_ref_name_by_sha(ref_sha)
       client = create_octokit_client
       ref_response = client.refs(@full_repo_name).find { |x| x[:object][:sha] == ref_sha }
-      ref_response[:ref].match(/refs\/(.*)/).captures.first
+      ref_response[:ref].match(%r{refs/(.*)}).captures.first
     end
 
     private
-      def create_post_from_api_response(post, ref)
-        # Base64.decode64 will convert our string into a ASCII string
-        # calling force_encoding('UTF-8') will fix that problem
-        text_contents = Base64.decode64(post.content).force_encoding('UTF-8')
-        @post_factory.create_post(text_contents, post.path, ref)
+
+    def create_post_from_api_response(post, ref)
+      # Base64.decode64 will convert our string into a ASCII string
+      # calling force_encoding('UTF-8') will fix that problem
+      text_contents = Base64.decode64(post.content).force_encoding('UTF-8')
+      @post_factory.create_post(text_contents, post.path, ref)
+    end
+
+    def get_open_jekyll_pull_requests(pull_request_body)
+      client = create_octokit_client
+      open_pull_requests = client.pull_requests(@full_repo_name, state: 'open')
+      open_pull_requests.select { |x| x[:body] == pull_request_body }
+    end
+
+    def create_post_image(filename, contents)
+      result = PostImage.new
+      result.filename = filename
+      result.contents = contents
+      result
+    end
+
+    def create_octokit_client
+      if @oath_token
+        Octokit::Client.new(login: @github_username, password: @github_pwd)
+      else
+
+        Octokit::Client.new(access_token: @oath_token)
+        user = client.user
+        user.login
+
       end
-
-      def get_open_jekyll_pull_requests(pull_request_body)
-        client = create_octokit_client
-        open_pull_requests = client.pull_requests(@full_repo_name, state: 'open')
-        open_pull_requests.select { |x| x[:body] == pull_request_body }
-      end
-
-      def create_post_image(filename, contents)
-        result = PostImage.new
-        result.filename = filename
-        result.contents = contents
-        result
-      end
-
-      def create_octokit_client
-        if (@oath_token)
-          Octokit::Client.new(login: @github_username, password: @github_pwd)
-        else
-
-          Octokit::Client.new(:access_token => @oath_token)
-          user = client.user
-          user.login
-
-        end
-      end
+    end
   end
 end

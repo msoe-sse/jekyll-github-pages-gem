@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # Third Party Dependencies
 require 'carrierwave'
 
