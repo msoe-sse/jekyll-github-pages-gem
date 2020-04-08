@@ -192,9 +192,10 @@ module Services
     # Params:
     # +ref_name+:: the name of the branch to create if necessary
     # +master_head_sha+:: the sha representing the head of master
-    def create_ref_if_necessary(ref_name, master_head_sha)
+    def create_ref_if_necessary(ref_name, master_head_sha, full_repo_name)
       client = create_octokit_client
       client.ref(full_repo_name, ref_name)
+      @full_repo_name = full_repo_name
       rescue Octokit::NotFound
         client.create_ref(full_repo_name, ref_name, master_head_sha)
     end
@@ -208,13 +209,13 @@ module Services
     # +ref_sha+:: the sha of the ref to fetch
     def get_ref_name_by_sha(ref_sha)
       client = create_octokit_client
-      ref_response = client.refs(full_repo_name).find { |x| x[:object][:sha] == ref_sha }
+      ref_response = client.refs(@full_repo_name).find { |x| x[:object][:sha] == ref_sha }
       ref_response[:ref].match(/refs\/(.*)/).captures.first
     end
 
     private
       def full_repo_name
-        "#{Rails.configuration.github_org}/#{Rails.configuration.github_repo_name}"
+        "#{@full_repo_name}"
       end
 
       def create_post_from_api_response(post, ref)
@@ -224,10 +225,10 @@ module Services
         @post_factory.create_post(text_contents, post.path, ref)
       end
 
-      def get_open_post_editor_pull_requests
+      def get_open_jekyll_pull_requests(pull_request_body)
         client = create_octokit_client
-        open_pull_requests = client.pull_requests(full_repo_name, state: 'open')
-        open_pull_requests.select { |x| x[:body] == Rails.configuration.pull_request_body }
+        open_pull_requests = client.pull_requests(@full_repo_name, state: 'open')
+        open_pull_requests.select { |x| x[:body] == pull_request_body }
       end
 
       def create_post_image(filename, contents)

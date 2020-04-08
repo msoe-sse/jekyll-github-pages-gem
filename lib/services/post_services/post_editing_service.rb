@@ -2,8 +2,8 @@ module Services
   ##
   # This class is responsible for editing posts on the SG website
   class PostEditingService < BasePostService
-    def initialize
-      super
+    def initialize(github_username, github_password)
+      super(github_username, github_password)
     end
 
     ##
@@ -16,7 +16,7 @@ module Services
     # +post_markdown+::the modified markdown to submit
     # +post_title+::the title for the existing post
     # +existing_post_file_path+::the file path to the existing post on GitHub
-    def edit_post(post_markdown, post_title, existing_post_file_path)
+    def edit_post(post_markdown, post_title, existing_post_file_path, pull_request_body, reviewers)
       # This ref_name variable represents the branch name
       # for editing a post. At the end we strip out all of the whitespace in 
       # the post_title to create a valid branch name
@@ -31,8 +31,8 @@ module Services
 
       @github_service.commit_and_push_to_repo("Edited post #{post_title}", new_tree_sha, master_head_sha, ref_name)
       @github_service.create_pull_request(branch_name, 'master', "Edited Post #{post_title}", 
-                                          Rails.configuration.pull_request_body, 
-                                          [Rails.configuration.webmaster_github_username])
+                                          pull_request_body, 
+                                          [reviewers])
         
       PostImageManager.instance.clear
     end

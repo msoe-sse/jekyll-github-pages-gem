@@ -3,7 +3,7 @@ module Services
   # The base class for service classes responsible for performing operations on posts
   class BasePostService
     def initialize(github_username, github_password)
-      @github_service = GithubService.new (github_username, github_password)
+      @github_service = GithubService.new(github_username, github_password)
       @kramdown_service = KramdownService.new
     end
 
