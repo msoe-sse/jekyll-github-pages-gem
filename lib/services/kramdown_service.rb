@@ -66,9 +66,7 @@ module Services
       all_img_tags = document_descendants.select { |x| x.type == :img }
       matching_image_tag = all_img_tags.find { |x| get_filename_for_image_tag(x).tr(' ', '_') == image_file_name }
 
-      if matching_image_tag
-        return get_filename_for_image_tag(matching_image_tag)
-      end
+      return get_filename_for_image_tag(matching_image_tag) if matching_image_tag
 
       nil
     end
@@ -86,9 +84,7 @@ module Services
       all_img_tags = document_descendants.select { |x| x.type == :img }
 
       result = all_img_tags.map do |img_tag|
-        if img_tag.attr['src'] !~ URI::DEFAULT_PARSER.make_regexp
-          img_tag.attr['src'][1..-1]
-        end
+        img_tag.attr['src'][1..-1] if img_tag.attr['src'] !~ URI::DEFAULT_PARSER.make_regexp
       end
 
       result.compact
