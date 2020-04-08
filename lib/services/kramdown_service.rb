@@ -111,7 +111,6 @@ module Services
       lead_break_section = "{: .lead}\r\n<!–-break-–>"
       
       hero_to_use = hero
-      hero_to_use = Rails.configuration.default_hero if hero_to_use.empty?
       result = %(---
 layout: post
 title: #{title}

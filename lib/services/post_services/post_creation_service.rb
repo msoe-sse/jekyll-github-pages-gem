@@ -2,8 +2,8 @@ module Services
   ##
   # This class is responsible for creating posts on the SG website
   class PostCreationService < BasePostService
-    def initialize
-      super
+    def initialize(github_username, github_password)
+      super(github_username, github_password)
     end
 
     ##
@@ -15,7 +15,7 @@ module Services
     # Params
     # +oauth_token+::a user's oauth access token
     # +post_markdown+:: the markdown contents of a post
-    def create_post(post_markdown, post_title)
+    def create_post(post_markdown, post_title, pull_request_body, reviewers)
       # This ref_name variable represents the branch name
       # for creating a post. At the end we strip out all of the whitespace in 
       # the post_title to create a valid branch name
@@ -33,8 +33,8 @@ module Services
       @github_service.commit_and_push_to_repo("Created post #{post_title}", 
                                               new_tree_sha, master_head_sha, ref_name)
       @github_service.create_pull_request(branch_name, 'master', "Created Post #{post_title}", 
-                                          Rails.configuration.pull_request_body, 
-                                          [Rails.configuration.webmaster_github_username])
+                                          pull_request_body, 
+                                          [reviewers])
         
       PostImageManager.instance.clear
     end

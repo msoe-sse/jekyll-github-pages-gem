@@ -2,8 +2,8 @@ module Services
   ##
   # This class is responsible for editing posts that are in PR on the SG website
   class PostPullRequestEditingService < BasePostService
-    def initialize
-      super
+    def initialize(github_username, github_password)
+      super(github_username, github_password)
     end
 
     ##

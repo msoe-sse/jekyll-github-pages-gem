@@ -9,9 +9,10 @@ module Services
   class GithubService
 
 
-    def initialize(github_username, github_password)
+    def initialize(github_username, github_password, full_repo_name)
       @github_username = github_username
       @github_pwd = github_password
+      @full_repo_name = full_repo_name
       @kramdown_service = Services::KramdownService.new
       @post_factory = Factories::PostFactory.new
     end
@@ -29,16 +30,16 @@ module Services
     def get_all_posts
       result = []
       client = create_octokit_client
-      posts = client.contents(full_repo_name, path: '_posts')
+      posts = client.contents(@full_repo_name, path: '_posts')
       posts.each do |post|
-        post_api_response = client.contents(full_repo_name, path: post.path)
+        post_api_response = client.contents(@full_repo_name, path: post.path)
 
         post_model = create_post_from_api_response(post_api_response, nil)
         image_paths = @kramdown_service.get_all_image_paths(post_model.contents)
 
         images = []
         image_paths.each do | image_path |
-          image_content = client.contents(full_repo_name, path: image_path)
+          image_content = client.contents(@full_repo_name, path: image_path)
           images << create_post_image(image_path, image_content.content)
         end
 
@@ -57,7 +58,7 @@ module Services
       pull_requests_for_user = get_open_post_editor_pull_requests
       
       pull_requests_for_user.each do | pull_request |
-        pull_request_files = client.pull_request_files(full_repo_name, pull_request[:number])
+        pull_request_files = client.pull_request_files(@full_repo_name, pull_request[:number])
 
         post = nil
         images = []
@@ -68,7 +69,7 @@ module Services
           # URI parameters so in order to get the ref we need to grab the first value in the hash and the first
           # URI parameter in the first hash value
           ref = contents_url_params.values.first.first
-          file_contents = client.contents(full_repo_name, path: pull_request_file[:filename], ref: ref)
+          file_contents = client.contents(@full_repo_name, path: pull_request_file[:filename], ref: ref)
 
           if pull_request_file[:filename].ends_with?('.md')
             post = create_post_from_api_response(file_contents, ref)
@@ -102,7 +103,7 @@ module Services
     # This method gets the sha of the commit at the head of master in the SG website repo
     def get_master_head_sha
       client = create_octokit_client
-      client.ref(full_repo_name, 'heads/master')[:object][:sha]
+      client.ref(@full_repo_name, 'heads/master')[:object][:sha]
     end
 
     ##
@@ -112,7 +113,7 @@ module Services
     # +head_sha+::the sha of the head of a certain branch
     def get_base_tree_for_branch(head_sha)
       client = create_octokit_client
-      client.commit(full_repo_name, head_sha)[:commit][:tree][:sha]
+      client.commit(@full_repo_name, head_sha)[:commit][:tree][:sha]
     end
 
     ##
@@ -122,7 +123,7 @@ module Services
     # +text+::the text content to create a blob for
     def create_text_blob(text)
       client = create_octokit_client
-      client.create_blob(full_repo_name, text)
+      client.create_blob(@full_repo_name, text)
     end
 
     ##
@@ -132,7 +133,7 @@ module Services
     # +content+::the base 64 encoded content to create a blob for
     def create_base64_encoded_blob(content)
       client = create_octokit_client
-      client.create_blob(full_repo_name, content, 'base64')
+      client.create_blob(@full_repo_name, content, 'base64')
     end
 
     ##
@@ -154,7 +155,7 @@ module Services
                               type: 'blob',
                               sha: file[:blob_sha] }
       end
-      client.create_tree(full_repo_name, blob_information, base_tree: sha_base_tree)[:sha]
+      client.create_tree(@full_repo_name, blob_information, base_tree: sha_base_tree)[:sha]
     end
 
     ##
@@ -166,8 +167,8 @@ module Services
     # +head_sha+::the sha of the head to commit from
     def commit_and_push_to_repo(commit_message, tree_sha, head_sha, ref_name)
       client = create_octokit_client
-      sha_new_commit = client.create_commit(full_repo_name, commit_message, tree_sha, head_sha)[:sha]
-      client.update_ref(full_repo_name, ref_name, sha_new_commit)
+      sha_new_commit = client.create_commit(@full_repo_name, commit_message, tree_sha, head_sha)[:sha]
+      client.update_ref(@full_repo_name, ref_name, sha_new_commit)
     end
 
     ##
@@ -181,8 +182,8 @@ module Services
     # +reviewers+::an array of pull request reviewers for the PR
     def create_pull_request(source_branch, base_branch, pr_title, pr_body, reviewers)
       client = create_octokit_client
-      pull_number = client.create_pull_request(full_repo_name, base_branch, source_branch, pr_title, pr_body)[:number]
-      client.request_pull_request_review(full_repo_name, pull_number, reviewers: reviewers)
+      pull_number = client.create_pull_request(@full_repo_name, base_branch, source_branch, pr_title, pr_body)[:number]
+      client.request_pull_request_review(@full_repo_name, pull_number, reviewers: reviewers)
     end
 
     ##
@@ -194,9 +195,9 @@ module Services
     # +master_head_sha+:: the sha representing the head of master
     def create_ref_if_necessary(ref_name, master_head_sha)
       client = create_octokit_client
-      client.ref(full_repo_name, ref_name)
+      client.ref(@full_repo_name, ref_name)
       rescue Octokit::NotFound
-        client.create_ref(full_repo_name, ref_name, master_head_sha)
+        client.create_ref(@full_repo_name, ref_name, master_head_sha)
     end
 
     ##
@@ -208,15 +209,11 @@ module Services
     # +ref_sha+:: the sha of the ref to fetch
     def get_ref_name_by_sha(ref_sha)
       client = create_octokit_client
-      ref_response = client.refs(full_repo_name).find { |x| x[:object][:sha] == ref_sha }
+      ref_response = client.refs(@full_repo_name).find { |x| x[:object][:sha] == ref_sha }
       ref_response[:ref].match(/refs\/(.*)/).captures.first
     end
 
     private
-      def full_repo_name
-        "#{Rails.configuration.github_org}/#{Rails.configuration.github_repo_name}"
-      end
-
       def create_post_from_api_response(post, ref)
         # Base64.decode64 will convert our string into a ASCII string
         # calling force_encoding('UTF-8') will fix that problem
@@ -224,10 +221,10 @@ module Services
         @post_factory.create_post(text_contents, post.path, ref)
       end
 
-      def get_open_post_editor_pull_requests
+      def get_open_jekyll_pull_requests(pull_request_body)
         client = create_octokit_client
-        open_pull_requests = client.pull_requests(full_repo_name, state: 'open')
-        open_pull_requests.select { |x| x[:body] == Rails.configuration.pull_request_body }
+        open_pull_requests = client.pull_requests(@full_repo_name, state: 'open')
+        open_pull_requests.select { |x| x[:body] == pull_request_body }
       end
 
       def create_post_image(filename, contents)
