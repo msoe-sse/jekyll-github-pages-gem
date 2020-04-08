@@ -6,7 +6,13 @@ Layout/LineLength:
     Max: 1024
 
 Metrics/MethodLength:
-    Max: 20
+    Max: 25
 
 Metrics/ClassLength:
     Max: 150
+
+Naming/AccessorMethodName:
+    Enabled: No
+
+Metrics/ParameterLists:
+    Max: 7
