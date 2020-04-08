@@ -1,3 +1,7 @@
+# Third Party Dependencies
+require 'carrierwave'
+
+# Source Files
 require 'factories/post_factory'
 require 'services/post_services/base_post_service'
 require 'services/post_services/post_creation_service'
@@ -10,5 +14,4 @@ require 'services/kramdown_service'
 require 'models/post'
 require 'models/post_image_manager'
 
-
-require 'uploader/post_image_uploader'
+require 'uploaders/post_image_uploader'
