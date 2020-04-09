@@ -9,15 +9,10 @@ module Services
   ##
   # This class contains all operations involving interacting with the GitHub API
   class GithubService
-    def initialize(github_username, github_password, full_repo_name)
+    def initialize(full_repo_name, github_username = nil, github_password = nil, oath_token = nil)
       @github_username = github_username
       @github_pwd = github_password
       @full_repo_name = full_repo_name
-      @kramdown_service = Services::KramdownService.new
-      @post_factory = Factories::PostFactory.new
-    end
-
-    def initialize(oath_token)
       @oath_token = oath_token
       @kramdown_service = Services::KramdownService.new
       @post_factory = Factories::PostFactory.new
