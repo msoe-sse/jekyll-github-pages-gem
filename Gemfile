@@ -2,7 +2,14 @@
 
 require 'rubygems'
 require 'gemspec'
+
 gem 'kramdown'
+
+gem 'minitest'
+
+gem 'simplecov'
+
+gem 'mocha'
 
 gem 'octokit', '~> 4.14.0'
 
