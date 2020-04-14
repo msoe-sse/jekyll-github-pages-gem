@@ -19,7 +19,7 @@ module Services
     # +existing_post_file_path+::the file path to the existing post on GitHub
     # +pull_request_body+::an optional pull request body for the post, it will be blank if nothing is provided
     # +reviewers+:: an optional list of reviewers for the post PR
-    def edit_post(post_markdown, post_title, existing_post_file_path, pull_request_body='', reviewers=[])
+    def edit_post(post_markdown, post_title, existing_post_file_path, pull_request_body = '', reviewers = [])
       # This ref_name variable represents the branch name
       # for editing a post. At the end we strip out all of the whitespace in
       # the post_title to create a valid branch name
