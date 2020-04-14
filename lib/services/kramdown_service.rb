@@ -92,7 +92,7 @@ module Services
 
     ##
     # This method takes parameters for a given post and formats them
-    # as a valid jekyll post for the SSE website
+    # as a valid jekyll post for a Jekyll website
     #
     # Params:
     # +text+:: the markdown contents of the post
@@ -100,6 +100,7 @@ module Services
     # +title+:: the title of the post
     # +tags+:: tags specific to the post
     # +overlay+:: the overlay color of the post
+    # +hero+:: a link to an optional background image for a post
     def create_jekyll_post_text(text, author, title, tags, overlay, hero)
       header_converted_text = fix_header_syntax(text)
       header_converted_text = add_line_break_to_markdown_if_necessary(header_converted_text)

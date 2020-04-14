@@ -2,7 +2,7 @@
 
 module Services
   ##
-  # This class is responsible for editing posts that are in PR on the SG website
+  # This class is responsible for editing posts that are in PR on a Jekyll website
   class PostPullRequestEditingService < BasePostService
     def initialize(github_username, github_password)
       super(github_username, github_password)

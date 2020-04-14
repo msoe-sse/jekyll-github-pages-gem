@@ -9,7 +9,7 @@ class PostImage
 end
 
 ##
-# An object representing a post on the SG website
+# An object representing a post on the Jekyll website
 class Post
   attr_accessor :title
   attr_accessor :author

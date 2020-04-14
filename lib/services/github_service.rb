@@ -19,7 +19,7 @@ module Services
     end
 
     ##
-    # This method fetches all the markdown contents of all the posts on the SG website
+    # This method fetches all the markdown contents of all the posts on a Jekyll website
     # that have been written and returns a list of models representing a Post.
     def get_all_posts
       result = []
@@ -79,11 +79,11 @@ module Services
     end
 
     ##
-    # This method fetches a single post from the SG website given a post title
+    # This method fetches a single post from a Jekyll website given a post title
     # and returns a Post model
     #
     # Params:
-    # +title+:: A title of a SSE website post
+    # +title+:: A title of a Jekyll website post
     # +ref+::a sha for a ref indicating the head of a branch a post is pushed to on the GitHub server
     def get_post_by_title(title, ref)
       result = nil
@@ -94,14 +94,14 @@ module Services
     end
 
     ##
-    # This method gets the sha of the commit at the head of master in the SG website repo
+    # This method gets the sha of the commit at the head of master in a Jekyll website repo
     def get_master_head_sha
       client = create_octokit_client
       client.ref(@full_repo_name, 'heads/master')[:object][:sha]
     end
 
     ##
-    # This method gets the sha of the base tree for a given branch in the SG website repo
+    # This method gets the sha of the base tree for a given branch in a Jekyll website repo
     #
     # Params
     # +head_sha+::the sha of the head of a certain branch
@@ -111,7 +111,7 @@ module Services
     end
 
     ##
-    # This method create a new blob in the SG website repo with text content
+    # This method create a new blob in a Jekyll website repo with text content
     #
     # Params
     # +text+::the text content to create a blob for
@@ -121,7 +121,7 @@ module Services
     end
 
     ##
-    # This method creates a new blob in the SG website repo with base 64 encoded content
+    # This method creates a new blob in a Jekyll website with base 64 encoded content
     #
     # Params
     # +content+::the base 64 encoded content to create a blob for
@@ -131,7 +131,7 @@ module Services
     end
 
     ##
-    # This method creates a new tree in the SG website repo and returns the tree's sha.
+    # This method creates a new tree in a Jekyll website repo and returns the tree's sha.
     # The method assumes that the paths passed into the method have corresponding blobs
     # created for the files
     #
@@ -153,7 +153,7 @@ module Services
     end
 
     ##
-    # This method commits and pushes a tree to the SSE website repo
+    # This method commits and pushes a tree to a Jekyll website repo
     #
     # Params:
     # +commit_message+::the message for the new commit
@@ -166,7 +166,7 @@ module Services
     end
 
     ##
-    # This method creates a pull request for a branch in the SG website repo
+    # This method creates a pull request for a branch in a Jekyll website repo
     #
     # Params:
     # +source_branch+::the source branch for the PR
@@ -181,7 +181,7 @@ module Services
     end
 
     ##
-    # This method will create a branch in the SG website repo
+    # This method will create a branch in a Jekyll website repo
     # if it already doesn't exist
     #
     # Params:

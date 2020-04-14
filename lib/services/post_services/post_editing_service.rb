@@ -2,7 +2,7 @@
 
 module Services
   ##
-  # This class is responsible for editing posts on the SG website
+  # This class is responsible for editing posts on a Jekyll website
   class PostEditingService < BasePostService
     def initialize(github_username, github_password)
       super(github_username, github_password)
@@ -12,13 +12,14 @@ module Services
     # This method submits changes to an existing post to GitHub by checking out a new branch for the post,
     # if the branch already doesn't exist. Commiting and pushing the markdown changes and any added photos
     # for the existing post to the branch. And the finally opening a pull request into master for the new post.
-    # The SSE webmaster will be requested for review on the created pull request
     #
     # Params
     # +post_markdown+::the modified markdown to submit
     # +post_title+::the title for the existing post
     # +existing_post_file_path+::the file path to the existing post on GitHub
-    def edit_post(post_markdown, post_title, existing_post_file_path, pull_request_body, reviewers)
+    # +pull_request_body+::an optional pull request body for the post, it will be blank if nothing is provided
+    # +reviewers+:: an optional list of reviewers for the post PR
+    def edit_post(post_markdown, post_title, existing_post_file_path, pull_request_body='', reviewers=[])
       # This ref_name variable represents the branch name
       # for editing a post. At the end we strip out all of the whitespace in
       # the post_title to create a valid branch name
