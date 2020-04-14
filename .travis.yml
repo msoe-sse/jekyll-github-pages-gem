@@ -1,0 +1,12 @@
+language: ruby
+rvm:
+  - 2.6
+branches:
+  only: [master]
+sudo: false # route your build to the container-based infrastructure for a faster build
+cache: bundler # caching bundler gem packages will speed up build
+install:
+  - bundle install --jobs=3 --retry=3
+script:
+  - bundle exec rubocop
+  

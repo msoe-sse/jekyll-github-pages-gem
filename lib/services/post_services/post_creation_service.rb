@@ -2,7 +2,7 @@
 
 module Services
   ##
-  # This class is responsible for creating posts on the SG website
+  # This class is responsible for creating posts on a Jekyll website
   class PostCreationService < BasePostService
     def initialize(github_username, github_password)
       super(github_username, github_password)
@@ -12,12 +12,14 @@ module Services
     # This method submits a new post to GitHub by checking out a new branch for the post,
     # if the branch already doesn't exist. Commiting and pushing the markdown and any photos
     # attached to the post to the branch. And then finally opening a pull request into master
-    # for the new post. The SSE webmaster will be requested for review on the created pull request
+    # for the new post.
     #
     # Params
     # +oauth_token+::a user's oauth access token
     # +post_markdown+:: the markdown contents of a post
-    def create_post(post_markdown, post_title, pull_request_body, reviewers)
+    # +pull_request_body+::an optional pull request body for the post, it will be blank if nothing is provided
+    # +reviewers+:: an optional list of reviewers for the post PR
+    def create_post(post_markdown, post_title, pull_request_body = '', reviewers = [])
       # This ref_name variable represents the branch name
       # for creating a post. At the end we strip out all of the whitespace in
       # the post_title to create a valid branch name

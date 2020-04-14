@@ -19,7 +19,7 @@ class PostImageManager
   end
 
   ##
-  # Adds an image to be uploaded in a SSE website post
+  # Adds an image to be uploaded in a Jekyll website post
   #
   # Params:
   # +file+:: A ActionDispatch::Http::UploadedFile object containing the file to be used in a post
@@ -31,7 +31,7 @@ class PostImageManager
   end
 
   ##
-  # Adds an image that was downloaded from the SSE website repo
+  # Adds an image that was downloaded from the Jekyll website repo
   #
   # Params:
   # +downloaded_image+:: A PostImage object representing the downloaded image
