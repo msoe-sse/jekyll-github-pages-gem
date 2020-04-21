@@ -3,10 +3,6 @@ require_relative '../lib/models/post'
 
 class TestHelper < MiniTest::Unit::TestCase
 
-  ENV['GH_BASIC_CLIENT_ID'] = 'github client id'
-  ENV['GH_BASIC_SECRET_ID'] = 'github client secret'
-
-
   protected
     class MockUploader
       attr_accessor :filename
