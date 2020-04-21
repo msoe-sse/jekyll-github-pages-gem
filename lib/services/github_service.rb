@@ -4,6 +4,8 @@ require 'octokit'
 require 'base64'
 require 'date'
 require 'cgi'
+require_relative 'kramdown_service'
+require_relative '../factories/post_factory'
 
 module Services
   ##
@@ -15,7 +17,8 @@ module Services
       @github_pwd = github_password
       @full_repo_name = full_repo_name
       @oath_token = oath_token
-      # @kramdown_service = Services::KramdownService.new
+
+      @kramdown_service = Services::KramdownService.new
       @post_factory = Factories::PostFactory.new
     end
 

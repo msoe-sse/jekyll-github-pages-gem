@@ -9,7 +9,7 @@ class TestExample < MiniTest::Unit::TestCase
   def setup
     puts 'WE SET THE TEST UP'
     puts system('pwd')
-    # @github_service = Services::GithubService.new('reponame', 'exampleuser', 'safepwd')
+    @github_service = Services::GithubService.new('reponame', 'exampleuser', 'safepwd')
     @test_var = nil
   end
 
