@@ -100,15 +100,15 @@ class BaseGemTest < MiniTest::Test
     mock_ruby_file = create_mock_ruby_file(mock_uploader.filename)
     # The yields in this mock will execute the ruby block for File.open
     File.expects(:open).with(mock_uploader.post_image.file.file, 'rb')
-                       .returns(mock_ruby_file).yields(mock_ruby_file)
+        .returns(mock_ruby_file).yields(mock_ruby_file)
     Base64.expects(:encode64).with("File Contents for #{mock_uploader.filename}")
           .returns("base 64 for #{mock_uploader.filename}")
-    
+
     sha_to_return = "blob sha for #{mock_uploader.filename}"
     Services::GithubService.any_instance.expects(:create_base64_encoded_blob)
                            .with("base 64 for #{mock_uploader.filename}")
                            .returns(sha_to_return)
-    
+
     sha_to_return
   end
 end

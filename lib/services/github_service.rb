@@ -235,9 +235,9 @@ module Services
 
     def create_octokit_client
       if !@oath_token
-        return Octokit::Client.new(login: @github_username, password: @github_pwd)
+        Octokit::Client.new(login: @github_username, password: @github_pwd)
       else
-        return Octokit::Client.new(access_token: @oath_token)
+        Octokit::Client.new(access_token: @oath_token)
       end
     end
   end
