@@ -3,7 +3,7 @@
 require_relative '../lib/models/post'
 
 # This class sets up helper utilities used by gem tests
-class TestHelper < MiniTest::Test
+class BaseGemTest < MiniTest::Test
   protected
 
   ## creates a mock image uploader
@@ -90,5 +90,25 @@ class TestHelper < MiniTest::Test
     result.filename = filename
     result.contents = contents
     result
+  end
+
+  def create_file_info_hash(file_path, blob_sha)
+    { path: file_path, blob_sha: blob_sha }
+  end
+
+  def mock_image_blob_and_return_sha(mock_uploader)
+    mock_ruby_file = create_mock_ruby_file(mock_uploader.filename)
+    # The yields in this mock will execute the ruby block for File.open
+    File.expects(:open).with(mock_uploader.post_image.file.file, 'rb')
+                       .returns(mock_ruby_file).yields(mock_ruby_file)
+    Base64.expects(:encode64).with("File Contents for #{mock_uploader.filename}")
+          .returns("base 64 for #{mock_uploader.filename}")
+    
+    sha_to_return = "blob sha for #{mock_uploader.filename}"
+    Services::GithubService.any_instance.expects(:create_base64_encoded_blob)
+                           .with("base 64 for #{mock_uploader.filename}")
+                           .returns(sha_to_return)
+    
+    sha_to_return
   end
 end

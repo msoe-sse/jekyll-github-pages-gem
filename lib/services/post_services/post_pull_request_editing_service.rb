@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require_relative './base_post_service'
+require_relative '../github_service'
+
 module Services
   ##
   # This class is responsible for editing posts that are in PR on a Jekyll website

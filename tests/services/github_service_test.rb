@@ -3,7 +3,7 @@ require 'mocha/minitest'
 require_relative '../test_helper'
 require_relative '../../lib/services/github_service'
 
-class GithubServiceTest < TestHelper
+class GithubServiceTest < BaseGemTest
   def setup
     @repo_name = 'msoe-sg/test-jekyll-site'
     @github_service = Services::GithubService.new(@repo_name, nil, nil, 'auth_token')

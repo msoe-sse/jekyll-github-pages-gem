@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require_relative './base_post_service'
+require_relative '../github_service'
+
 module Services
   ##
   # This class is responsible for creating posts on a Jekyll website
@@ -38,7 +41,7 @@ module Services
                                               new_tree_sha, master_head_sha, ref_name)
       @github_service.create_pull_request(branch_name, 'master', "Created Post #{post_title}",
                                           pull_request_body,
-                                          [reviewers])
+                                          reviewers)
 
       PostImageManager.instance.clear
     end
