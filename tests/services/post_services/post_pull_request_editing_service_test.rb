@@ -6,12 +6,14 @@ require_relative '../../test_helper'
 require_relative '../../../lib/services/post_services/post_pull_request_editing_service'
 require_relative '../../../lib/models/post_image_manager'
 
+##
+# Test class for the PostPullRequestEditingService class
 class PostPullRequestEditingServiceTest < BaseGemTest
   def setup
     @post_pull_request_editing_service = Services::PostPullRequestEditingService.new('user', 'password')
   end
 
-  def test_edit_post_in_pr_should_commit_edits_to_an_existing_post_up_to_the_SG_website_Github_repo
+  def test_edit_post_in_pr_should_commit_edits_to_an_existing_post_up_to_the_jekyll_website_github_repo
     # Arrange
     Services::GithubService.any_instance.expects(:get_ref_name_by_sha).returns('heads/createPostTestPost')
     Services::GithubService.any_instance.expects(:get_base_tree_for_branch).with('my ref').returns('master tree sha')

@@ -5,6 +5,8 @@ require 'mocha/minitest'
 require_relative '../test_helper'
 require_relative '../../lib/services/github_service'
 
+##
+# Test class for the GithubService class
 class GithubServiceTest < BaseGemTest
   def setup
     @repo_name = 'msoe-sg/test-jekyll-site'
@@ -98,7 +100,7 @@ class GithubServiceTest < BaseGemTest
     assert_equal 0, post3_model.images.length
   end
 
-  def test_get_all_posts_in_pr_should_return_all_posts_in_PR
+  def test_get_all_posts_in_pr_should_return_all_posts_in_pr
     # Arrange
     pr_body = 'This pull request was opened automatically by the SG website editor.'
     post_content = create_dummy_api_resource(content: 'PR base 64 content', path: 'sample.md')
@@ -350,7 +352,7 @@ class GithubServiceTest < BaseGemTest
     # No Assert - taken care of with mocha mock setups
   end
 
-  def test_get_ref_name_by_sha_should_return_the_properly_formatted_ref_name_from_Octokit
+  def test_get_ref_name_by_sha_should_return_the_properly_formatted_ref_name_from_octokit
     # Arrange
     response = [
       {
@@ -446,6 +448,8 @@ class GithubServiceTest < BaseGemTest
     assert_equal contents, actual.contents
   end
 
+  ##
+  # Represents a dummy API resource object from Octokit
   class DummyApiResource
     attr_accessor :path
     attr_accessor :content

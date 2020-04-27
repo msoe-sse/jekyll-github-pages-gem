@@ -6,6 +6,8 @@ require_relative '../../test_helper'
 require_relative '../../../lib/services/post_services/post_editing_service'
 require_relative '../../../lib/models/post_image_manager'
 
+##
+# Test Class for the PostEditingService class
 class PostEditingServiceTest < BaseGemTest
   def setup
     @post_editing_service = Services::PostEditingService.new('user', 'password')
@@ -13,7 +15,7 @@ class PostEditingServiceTest < BaseGemTest
     @reviewers = ['reviewer']
   end
 
-  def test_edit_post_should_commit_edits_to_an_existing_post_up_to_the_jekyll_website_Github_repo
+  def test_edit_post_should_commit_edits_to_an_existing_post_up_to_the_jekyll_website_github_repo
     # Arrange
     Services::GithubService.any_instance.expects(:get_master_head_sha).returns('master head sha')
     Services::GithubService.any_instance.expects(:get_base_tree_for_branch)
@@ -71,7 +73,7 @@ class PostEditingServiceTest < BaseGemTest
     # No Assert - taken care of with mocha mock setups
   end
 
-  def test_edit_post_should_upload_any_images_if_any_exist_in_the_PostImageManager
+  def test_edit_post_should_upload_any_images_if_any_exist_in_the_post_image_manager
     # Arrange
     test_markdown = "# hello\r\n![My File.jpg](/assets/img/My File.jpg)"
 

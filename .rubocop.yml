@@ -6,9 +6,13 @@ Layout/LineLength:
 
 Metrics/MethodLength:
     Max: 25
+    Exclude:
+        - tests/**/*
 
 Metrics/ClassLength:
     Max: 150
+    Exclude:
+        - tests/**/*
 
 Naming/AccessorMethodName:
     Enabled: No
@@ -18,6 +22,8 @@ Metrics/ParameterLists:
     
 Metrics/AbcSize:
     Max: 30
+    Exclude:
+        - tests/**/*
 
 Layout/EndOfLine:
     EnforcedStyle: lf
