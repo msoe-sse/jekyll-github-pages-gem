@@ -12,7 +12,8 @@ module Services
   # This class contains all operations involving interacting with the GitHub API
   class GithubService
     def initialize(full_repo_name, github_username = nil, github_password = nil, oath_token = nil)
-      (raise ArgumentError.new 'Proper authentication not provided. Provide either username/password or an auth token.') if !(github_username && github_password) && !oath_token
+      (raise ArgumentError.new 'Proper authentication not provided. Provide either username/password or an auth token.') if !(github_username &&
+        github_password) && !oath_token
       @github_username = github_username
       @github_pwd = github_password
       @full_repo_name = full_repo_name

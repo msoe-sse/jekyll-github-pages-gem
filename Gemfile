@@ -16,8 +16,8 @@ gem 'faraday', '~> 0.17.1'
 
 gem 'rake'
 
-group :test do 
+group :test do
   gem 'minitest'
-  gem 'simplecov'
   gem 'mocha'
+  gem 'simplecov'
 end
