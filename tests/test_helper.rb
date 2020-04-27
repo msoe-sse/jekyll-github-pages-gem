@@ -3,7 +3,7 @@
 require_relative '../lib/models/post'
 
 # This class sets up helper utilities used by gem tests
-class TestHelper < MiniTest::Unit::TestCase
+class TestHelper < MiniTest::Test
   protected
 
   ## creates a mock image uploader
