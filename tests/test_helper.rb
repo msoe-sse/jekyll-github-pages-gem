@@ -98,6 +98,9 @@ class BaseGemTest < MiniTest::Test
     { path: file_path, blob_sha: blob_sha }
   end
 
+  ##
+  # This method will take a carrierwave uploader and mock creating an image blob
+  # for that uploader
   def mock_image_blob_and_return_sha(mock_uploader)
     mock_ruby_file = create_mock_ruby_file(mock_uploader.filename)
     # The yields in this mock will execute the ruby block for File.open
