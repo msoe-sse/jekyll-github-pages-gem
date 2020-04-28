@@ -5,12 +5,6 @@ gemspec
 
 gem 'kramdown'
 
-gem 'minitest'
-
-gem 'simplecov'
-
-gem 'mocha'
-
 gem 'octokit', '~> 4.14.0'
 
 gem 'rubocop', '~> 0.71'
@@ -21,3 +15,9 @@ gem 'carrierwave', '>= 2.0.0.rc', '< 3.0'
 gem 'faraday', '~> 0.17.1'
 
 gem 'rake'
+
+group :test do
+  gem 'minitest'
+  gem 'mocha'
+  gem 'simplecov'
+end

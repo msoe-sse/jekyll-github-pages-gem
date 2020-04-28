@@ -12,7 +12,8 @@ module Services
   # This class contains all operations involving interacting with the GitHub API
   class GithubService
     def initialize(full_repo_name, github_username = nil, github_password = nil, oath_token = nil)
-      (raise ArgumentError.new 'Proper authentication not provided. Provide either username/password or an auth token.') if !(github_username && github_password) && !oath_token
+      (raise ArgumentError.new 'Proper authentication not provided. Provide either username/password or an auth token.') if !(github_username &&
+        github_password) && !oath_token
       @github_username = github_username
       @github_pwd = github_password
       @full_repo_name = full_repo_name
@@ -50,10 +51,10 @@ module Services
 
     ##
     # This method fetches all of the posts that have been written but have not been merged into master yet.
-    def get_all_posts_in_pr
+    def get_all_posts_in_pr(pr_body)
       result = []
       client = create_octokit_client
-      pull_requests_for_user = get_open_post_editor_pull_requests
+      pull_requests_for_user = get_open_jekyll_pull_requests(pr_body)
 
       pull_requests_for_user.each do |pull_request|
         pull_request_files = client.pull_request_files(@full_repo_name, pull_request[:number])
@@ -69,7 +70,7 @@ module Services
           ref = contents_url_params.values.first.first
           file_contents = client.contents(@full_repo_name, path: pull_request_file[:filename], ref: ref)
 
-          if pull_request_file[:filename].ends_with?('.md')
+          if pull_request_file[:filename].end_with?('.md')
             post = create_post_from_api_response(file_contents, ref)
             result << post
           else
@@ -216,7 +217,7 @@ module Services
     def create_post_from_api_response(post, ref)
       # Base64.decode64 will convert our string into a ASCII string
       # calling force_encoding('UTF-8') will fix that problem
-      text_contents = Base64.decode64(post.content).force_encoding('UTF-8')
+      text_contents = Base64.decode64(post.content).dup.force_encoding('UTF-8')
       @post_factory.create_post(text_contents, post.path, ref)
     end
 
@@ -234,14 +235,10 @@ module Services
     end
 
     def create_octokit_client
-      if @oath_token
+      if !@oath_token
         Octokit::Client.new(login: @github_username, password: @github_pwd)
       else
-
         Octokit::Client.new(access_token: @oath_token)
-        user = client.user
-        user.login
-
       end
     end
   end

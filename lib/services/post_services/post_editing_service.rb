@@ -1,5 +1,8 @@
 # frozen_string_literal: true
 
+require_relative './base_post_service'
+require_relative '../github_service'
+
 module Services
   ##
   # This class is responsible for editing posts on a Jekyll website
@@ -35,7 +38,7 @@ module Services
       @github_service.commit_and_push_to_repo("Edited post #{post_title}", new_tree_sha, master_head_sha, ref_name)
       @github_service.create_pull_request(branch_name, 'master', "Edited Post #{post_title}",
                                           pull_request_body,
-                                          [reviewers])
+                                          reviewers)
 
       PostImageManager.instance.clear
     end
