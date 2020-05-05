@@ -9,6 +9,9 @@ module Factories
     LEAD = '{: .lead}'
     BREAK = '<!–-break-–>'
 
+    # serves as the default hero for a post if none is provided.
+    @@default_hero = 'https://source.unsplash.com/collection/145103/'
+
     ##
     # This method parses markdown in a post a returns a post model
     #
@@ -60,7 +63,7 @@ module Factories
       post_model.title = header.match(/title:\s*(.*)(\r\n|\r|\n)/).captures.first
       post_model.author = header.match(/author:\s*(.*)(\r\n|\r|\n)/).captures.first
       post_model.hero = header.match(/hero:\s*(.*)(\r\n|\r|\n)/).captures.first
-      post_model.hero = ''
+      post_model.hero = '' if post_model.hero == @@default_hero
       post_model.overlay = header.match(/overlay:\s*(.*)(\r\n|\r|\n)/).captures.first
     end
   end

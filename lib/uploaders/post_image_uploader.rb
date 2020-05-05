@@ -3,6 +3,7 @@ require 'carrierwave'
 ##
 # The file uploader class for uploading images to a Jekyll website post
 class PostImageUploader < CarrierWave::Uploader::Base
+
   include CarrierWave::MiniMagick
   # These constants represent the maximum width and height an uploaded can be for the post preview
   # and for actually appearing on a Jekyll website. These numbers were initially determined by testing
@@ -12,6 +13,7 @@ class PostImageUploader < CarrierWave::Uploader::Base
   POST_LIMIT = [800, 700].freeze
 
   storage :file
+
 
   ##
   # Limits only images to be uploaded to an SSE website post
