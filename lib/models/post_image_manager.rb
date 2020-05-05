@@ -9,6 +9,7 @@ class PostImageManager
 
   attr_reader :uploaders
   attr_reader :downloaded_images
+  attr_accessor :root_dir
 
   ##
   # The constructor for PostImageManager which initializes the array of Carrierware
@@ -16,6 +17,7 @@ class PostImageManager
   def initialize
     @uploaders = []
     @downloaded_images = []
+    @root_dir = ''
   end
 
   ##
@@ -42,9 +44,9 @@ class PostImageManager
   ##
   # Clears the manager of all currently exisiting image uploaders and delete's their cache directories.
   # Also clears the manager of all of the downloaded images
-  def clear
+  def clear(_root_dir)
     @uploaders.each do |uploader|
-      full_preview_path = "#{Rails.root}/public/uploads/tmp/#{uploader.preview.cache_name}"
+      full_preview_path = "#{@root_dir}/public/uploads/tmp/#{uploader.preview.cache_name}"
       cache_dir = File.expand_path('..', full_preview_path)
       uploader.remove!
       Dir.delete(cache_dir)

@@ -90,6 +90,6 @@ class PostImageManagerTest < BaseGemTest
 
     PostImageUploader.any_instance.expects(:preview).returns(preview_uploader).at_least(0)
     PostImageUploader.any_instance.expects(:remove!).at_least(0)
-    Dir.expects(:delete).at_least(0)
+    Dir.expects(:delete).with(any_paremeters).returns(nil).at_least(0)
   end
 end
