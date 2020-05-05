@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-
+require 'carrierwave'
 ##
 # The file uploader class for uploading images to a Jekyll website post
 class PostImageUploader < CarrierWave::Uploader::Base
@@ -23,7 +23,7 @@ class PostImageUploader < CarrierWave::Uploader::Base
     # 5 mb is a very large photo it will probably never be reached. But
     # this will prevent people from passing off very large files as an image.
     # If you change this limit please document the reason for changing it below
-    1..5.megabytes
+    (1..5).step { |x| bytes_to_megabytes x }
   end
 
   version :preview do
@@ -32,5 +32,10 @@ class PostImageUploader < CarrierWave::Uploader::Base
 
   version :post_image do
     process resize_to_limit: POST_LIMIT
+  end
+
+  private
+  def bytes_to_megabytes(bytes)
+    bytes * (1024.0 * 1024.0)
   end
 end
