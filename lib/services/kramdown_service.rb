@@ -43,8 +43,7 @@ module Services
   ##
   # This class contains all operations with interacting with the kramdown engine
   class KramdownService
-
-    @@default_hero = 'https://source.unsplash.com/collection/145103/'
+    DEFAULT_HERO = 'https://source.unsplash.com/collection/145103/'
     ##
     # This method takes given markdown and converts it to HTML for the post preview
     #
@@ -115,14 +114,14 @@ module Services
       lead_break_section = "{: .lead}\r\n<!–-break-–>"
 
       hero_to_use = hero
-      hero_to_use = @@default_hero if hero_to_use.empty?
+      hero_to_use = DEFAULT_HERO if hero_to_use.empty?
       result = %(---
 layout: post
 title: #{title}
 author: #{author}\r\n)
 
-      result = result + "#{tag_section}\r\n" unless parsed_tags.empty?
-      result = result + %(hero: #{hero_to_use}
+      result += "#{tag_section}\r\n" unless parsed_tags.empty?
+      result += %(hero: #{hero_to_use}
 overlay: #{overlay.downcase}
 published: true
 ---
@@ -138,8 +137,8 @@ published: true
       tag_array = tags.split(',')
       result = ''
       tag_array.each do |tag|
-        result = result + "  - #{tag.strip}"
-        result =result + "\r\n" if tag != tag_array.last
+        result += "  - #{tag.strip}"
+        result += "\r\n" if tag != tag_array.last
       end
       result
     end

@@ -5,28 +5,33 @@ require 'mocha/minitest'
 require_relative '../test_helper'
 require_relative '../../lib/factories/post_factory'
 
+# tests the post factory class
 class PostFactoryTest < BaseGemTest
   LEAD_BREAK_SECTION1 = "{: .lead}\r\n<!–-break-–>"
   LEAD_BREAK_SECTION2 = "{: .lead}\n<!–-break-–>"
 
-  def setup 
+  def setup
     @post_factory = Factories::PostFactory.new
   end
-  def test_create_post_create_post_should_return_nil_if_given_a_nil_value_for_post_contents    # Act
+
+  def test_create_post_should_return_nil_if_given_a_nil_value_for_post_contents
+    # Act
     result = @post_factory.create_post(nil, nil, nil)
 
     # Assert
     assert_nil result
   end
 
-  def test_create_post_create_post_should_return_nil_if_given_a_nonstring_type_for_post_contents    # Act
+  def test_create_post_should_return_nil_if_given_a_nonstring_type_for_post_contents
+    # Act
     result = @post_factory.create_post(1, 'my post.md', 'myref')
 
     # Assert
     assert_nil result
   end
 
-  def test_create_post_create_post_should_return_a_post_model_with_correct_values    # Arrange
+  def test_create_post_should_return_a_post_model_with_correct_values
+    # Arrange
     post_contents = %(---
 layout: post
 title: Some Post
@@ -55,7 +60,7 @@ overlay: green
     assert_equal "#An H1 tag\n##An H2 tag", result.contents
   end
 
-  def test_create_post_create_post_should_return_a_post_model_with_correct_values_given_a_post_with_slash_r_slash_n_line_breaks 
+  def test_create_post_should_return_a_post_model_with_correct_values_given_a_post_with_slash_r_slash_n_line_breaks
     # Arrange
     post_contents = %(---
 layout: post\r
@@ -70,10 +75,10 @@ overlay: green\r
 #{LEAD_BREAK_SECTION2}
 #An H1 tag\r
 ##An H2 tag)
-        
+
     # Act
     result = @post_factory.create_post(post_contents, 'my post.md', 'myref')
-        
+
     # Assert
     assert_equal 'my post.md', result.file_path
     assert_equal 'myref', result.github_ref
