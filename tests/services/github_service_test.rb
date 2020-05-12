@@ -10,25 +10,7 @@ require_relative '../../lib/services/github_service'
 class GithubServiceTest < BaseGemTest
   def setup
     @repo_name = 'msoe-sg/test-jekyll-site'
-    @github_service = Services::GithubService.new(@repo_name, nil, nil, 'auth_token')
-  end
-
-  def test_constructor_should_raise_argument_error_when_not_given_any_auth_parameters
-    assert_raises ArgumentError do
-      Services::GithubService.new(@repo_name, nil, nil, nil)
-    end
-  end
-
-  def test_constructor_should_raise_argument_error_when_given_username_but_not_password
-    assert_raises ArgumentError do
-      Services::GithubService.new(@repo_name, 'user', nil, nil)
-    end
-  end
-
-  def test_constructor_should_raise_argument_error_when_given_password_but_not_username
-    assert_raises ArgumentError do
-      Services::GithubService.new(@repo_name, nil, 'password', nil)
-    end
+    @github_service = Services::GithubService.new(@repo_name, 'auth_token')
   end
 
   def test_get_all_posts_should_return_all_posts_from_the_jekyll_website

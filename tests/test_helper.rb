@@ -1,7 +1,9 @@
 # frozen_string_literal: true
 
 require 'simplecov'
-SimpleCov.start
+SimpleCov.start do
+  add_filter '/tests/'
+end
 require_relative '../lib/models/post'
 
 # This class sets up helper utilities used by gem tests

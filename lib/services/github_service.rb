@@ -11,13 +11,9 @@ module Services
   ##
   # This class contains all operations involving interacting with the GitHub API
   class GithubService
-    def initialize(full_repo_name, github_username = nil, github_password = nil, oath_token = nil)
-      (raise ArgumentError.new 'Proper authentication not provided. Provide either username/password or an auth token.') if !(github_username &&
-        github_password) && !oath_token
-      @github_username = github_username
-      @github_pwd = github_password
+    def initialize(full_repo_name, access_token)
       @full_repo_name = full_repo_name
-      @oath_token = oath_token
+      @access_token = access_token
 
       @kramdown_service = Services::KramdownService.new
       @post_factory = Factories::PostFactory.new
@@ -235,11 +231,7 @@ module Services
     end
 
     def create_octokit_client
-      if !@oath_token
-        Octokit::Client.new(login: @github_username, password: @github_pwd)
-      else
-        Octokit::Client.new(access_token: @oath_token)
-      end
+      Octokit::Client.new(access_token: @access_token)
     end
   end
 end
