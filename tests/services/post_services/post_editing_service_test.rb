@@ -10,7 +10,7 @@ require_relative '../../../lib/models/post_image_manager'
 # Test Class for the PostEditingService class
 class PostEditingServiceTest < BaseGemTest
   def setup
-    @post_editing_service = Services::PostEditingService.new('user', 'password')
+    @post_editing_service = Services::PostEditingService.new('reponame', 'token')
     @pr_body = 'This pull request was opened automatically by the jekyll website editor.'
     @reviewers = ['reviewer']
   end

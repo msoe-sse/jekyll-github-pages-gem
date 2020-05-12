@@ -10,7 +10,7 @@ require_relative '../../../lib/models/post_image_manager'
 # Test class for the PostPullRequestEditingService class
 class PostPullRequestEditingServiceTest < BaseGemTest
   def setup
-    @post_pull_request_editing_service = Services::PostPullRequestEditingService.new('user', 'password')
+    @post_pull_request_editing_service = Services::PostPullRequestEditingService.new('reponame', 'token')
   end
 
   def test_edit_post_in_pr_should_commit_edits_to_an_existing_post_up_to_the_jekyll_website_github_repo

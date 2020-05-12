@@ -5,7 +5,7 @@ gemspec
 
 gem 'kramdown'
 
-gem 'octokit', '~> 4.14.0'
+gem 'octokit', '~> 4.18'
 
 gem 'rubocop', '~> 0.71'
 
