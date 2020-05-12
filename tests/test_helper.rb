@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require 'simplecov'
-SimpleCov.start do 
+SimpleCov.start do
   add_filter '/tests/'
 end
 require_relative '../lib/models/post'
