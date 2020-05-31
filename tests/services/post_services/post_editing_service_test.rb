@@ -1,10 +1,6 @@
 # frozen_string_literal: true
 
-require 'minitest/autorun'
-require 'mocha/minitest'
 require_relative '../../test_helper'
-require_relative '../../../lib/services/post_services/post_editing_service'
-require_relative '../../../lib/models/post_image_manager'
 
 ##
 # Test Class for the PostEditingService class

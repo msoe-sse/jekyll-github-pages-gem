@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
-require 'minitest/autorun'
-require 'mocha/minitest'
 require_relative '../test_helper'
-require_relative '../../lib/services/github_service'
 
 ##
 # Test class for the GithubService class
