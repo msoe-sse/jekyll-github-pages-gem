@@ -44,7 +44,7 @@ class PostImageManager
   ##
   # Clears the manager of all currently exisiting image uploaders and delete's their cache directories.
   # Also clears the manager of all of the downloaded images
-  def clear(_root_dir)
+  def clear
     @uploaders.each do |uploader|
       full_preview_path = "#{@root_dir}/public/uploads/tmp/#{uploader.preview.cache_name}"
       cache_dir = File.expand_path('..', full_preview_path)

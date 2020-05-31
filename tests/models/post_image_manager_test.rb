@@ -5,7 +5,7 @@ require_relative '../test_helper'
 # test the post image manager model
 class PostImageManagerTest < BaseGemTest
   def setup
-    # setup_clear_mocks
+    setup_clear_mocks
     PostImageManager.instance.clear
   end
 
@@ -87,6 +87,6 @@ class PostImageManagerTest < BaseGemTest
 
     PostImageUploader.any_instance.expects(:preview).returns(preview_uploader).at_least(0)
     PostImageUploader.any_instance.expects(:remove!).at_least(0)
-    Dir.expects(:delete).with(any_paremeters).returns(nil).at_least(0)
+    Dir.expects(:delete).returns(nil).at_least(0)
   end
 end
