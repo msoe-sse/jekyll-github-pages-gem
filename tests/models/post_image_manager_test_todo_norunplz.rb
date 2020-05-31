@@ -1,9 +1,6 @@
 # frozen_string_literal: true
 
-require 'minitest/autorun'
-require 'mocha/minitest'
 require_relative '../test_helper'
-require_relative '../../lib/models/post_image_manager'
 
 # test the post image manager model
 class PostImageManagerTest < BaseGemTest
