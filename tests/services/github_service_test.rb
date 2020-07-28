@@ -177,6 +177,69 @@ class GithubServiceTest < BaseGemTest
     # Assert
     assert_equal 'heads/branch2', result
   end
+  
+  def test_get_text_contents_from_file_should_return_contents_from_default_branch_when_not_given_ref
+    # Arrange
+    file_path = '_posts/mypost.md'
+    contents = create_dummy_api_resource(path: file_path, content: 'post base 64 content')
+
+    Octokit::Client.any_instance.expects(:contents).with(@repo_name, path: file_path).returns(contents)
+    Base64.expects(:decode64).with('post base 64 content').returns('post content')
+
+    # Act
+    result = @github_service.get_text_contents_from_file(file_path)
+
+    # Assert
+    assert_equal 'post content', result
+  end
+
+  def test_get_text_contents_from_file_should_return_contents_from_branch_when_given_ref
+    # Arrange
+    ref = 'ref'
+    file_path = '_posts/mypost.md'
+    contents = create_dummy_api_resource(path: file_path, content: 'post base 64 content')
+    
+    Octokit::Client.any_instance.expects(:contents).with(@repo_name, path: file_path, ref: ref).returns(contents)
+    Base64.expects(:decode64).with('post base 64 content').returns('post content')
+
+    # Act
+    result = @github_service.get_text_contents_from_file(file_path, ref)
+
+    # Assert
+    assert_equal 'post content', result
+  end
+
+  def test_get_contents_from_path_should_return_github_contents_response_when_given_valid_path
+    # Arrange
+    file_path = '_posts/mypost.md'
+    contents = create_dummy_api_resource(path: file_path, content: 'post base 64 content')
+
+    Octokit::Client.any_instance.expects(:contents).with(@repo_name, path: file_path).returns(contents)
+
+    # Act
+    result = @github_service.get_contents_from_path(file_path)
+
+    # Assert
+    assert_equal contents, result
+  end
+
+  def test_get_open_pull_requests_with_body_should_return_all_pull_requests_matching_given_body
+  end
+
+  def test_get_pr_files_should_return_pull_request_files_when_given_valid_pr_number
+  end
+
+  def test_get_ref_from_contents_url_should_return_ref_given_valid_contents_url
+    # Arrange
+    ref = 'myref'
+    contents_url = "http://example.com?ref=#{ref}"
+
+    # Act
+    result = @github_service.get_ref_from_contents_url(contents_url)
+
+    # Assert
+    assert_equal ref, result
+  end
 
   private
 
@@ -185,17 +248,6 @@ class GithubServiceTest < BaseGemTest
     resource.path = parameters[:path]
     resource.content = parameters[:content]
     resource
-  end
-
-  def create_post_model(parameters)
-    post_model = Post.new
-    post_model.title = parameters[:title]
-    post_model.author = parameters[:author]
-    post_model.hero = parameters[:hero]
-    post_model.overlay = parameters[:overlay]
-    post_model.contents = parameters[:contents]
-    post_model.tags = parameters[:tags]
-    post_model
   end
 
   def create_blob_info_hash(file_path, blob_sha)
@@ -235,11 +287,6 @@ class GithubServiceTest < BaseGemTest
       contents_url: "http://example.com?ref=#{ref}",
       filename: filename
     }
-  end
-
-  def assert_post_image(filename, contents, actual)
-    assert_equal filename, actual.filename
-    assert_equal contents, actual.contents
   end
 
   ##

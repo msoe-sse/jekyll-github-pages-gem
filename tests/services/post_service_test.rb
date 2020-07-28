@@ -423,4 +423,22 @@ class PostServiceTest < BaseGemTest
   
       # No Assert - taken care of with mocha mock setups
     end
+
+    private
+
+    def create_post_model(parameters)
+      post_model = Post.new
+      post_model.title = parameters[:title]
+      post_model.author = parameters[:author]
+      post_model.hero = parameters[:hero]
+      post_model.overlay = parameters[:overlay]
+      post_model.contents = parameters[:contents]
+      post_model.tags = parameters[:tags]
+      post_model
+    end
+
+    def assert_post_image(filename, contents, actual)
+      assert_equal filename, actual.filename
+      assert_equal contents, actual.contents
+    end
 end

@@ -179,21 +179,5 @@ module Services
       # URI parameter in the first hash value
       contents_url_params.values.first.first
     end
-
-    private
-
-    def create_post_from_api_response(post, ref)
-      # Base64.decode64 will convert our string into a ASCII string
-      # calling force_encoding('UTF-8') will fix that problem
-      text_contents = Base64.decode64(post.content).dup.force_encoding('UTF-8')
-      @post_factory.create_post(text_contents, post.path, ref)
-    end
-
-    def create_post_image(filename, contents)
-      result = PostImage.new
-      result.filename = filename
-      result.contents = contents
-      result
-    end
   end
 end
