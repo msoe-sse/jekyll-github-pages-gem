@@ -3,7 +3,15 @@
 require_relative '../models/page'
 
 module Factories
+  ##
+  # This class is a factory for parsing page text and creating a correseponding page model
   class PageFactory
+    ##
+    # This method parses markdown in a page a returns a page model
+    #
+    # Params:
+    # +page_contents+::markdown in a given page
+    # +github_ref+::a sha for a ref indicating the head of a branch a page is pushed to on the GitHub server
     def create_page(page_contents, github_ref)
       create_page_model(page_contents, github_ref) if !page_contents.nil? && page_contents.is_a?(String)
     end
