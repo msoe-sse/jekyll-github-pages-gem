@@ -104,6 +104,23 @@ class BaseGemTest < MiniTest::Test
     { path: file_path, blob_sha: blob_sha }
   end
 
+  def create_pull_request_file_hash(ref, filename)
+    {
+      contents_url: "http://example.com?ref=#{ref}",
+      filename: filename
+    }
+  end
+  
+  def create_pull_request_hash(username, body, number)
+    {
+      user: {
+        login: username
+      },
+      body: body,
+      number: number
+    }
+  end
+  
   ##
   # This method will take a carrierwave uploader and mock creating an image blob
   # for that uploader

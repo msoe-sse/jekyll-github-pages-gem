@@ -224,9 +224,46 @@ class GithubServiceTest < BaseGemTest
   end
 
   def test_get_open_pull_requests_with_body_should_return_all_pull_requests_matching_given_body
+    # Arrange
+    open_pull_requests = [
+      create_pull_request_hash('andy-wojciechowski', 'my pr body', 1)
+      create_pull_request_hash('GFELMING133', 'my pr body', 2)
+      create_pull_request_hash('andy-wojciechowski', 'my pr body 2', 3)
+      create_pull_request_hash('Joe-Weller', 'my pr body', 4)
+      create_pull_request_hash('andy-wojciechowski', 'my pr body', 5)
+    ]
+
+    Octokit::Client.any_instance.expects(:pull_requests).with(@repo_name, state: 'open').returns(open_pull_requests)
+    Octokit::Client.any_instance.expects(:user).returns({ login: 'andy-wojciechowski' })
+
+    # Act
+    result = @github_service.get_open_pull_requests_with_body('my pr body')
+
+    # Assert
+    assert_equal 3, result.length
+
+    assert_equal open_pull_requests[0], result[0]
+    assert_equal open_pull_requests[2], result[1]
+    assert_equal open_pull_requests[4], result[2]
   end
 
   def test_get_pr_files_should_return_pull_request_files_when_given_valid_pr_number
+    # Arrange
+    pr_files = [
+      create_pull_request_file_hash('myBranch', 'post1.md'),
+      create_pull_request_file_hash('myBranch', 'post2.md'),
+      create_pull_request_file_hash('myBranch', 'post3.md')
+    ]
+
+    pr_number = 1
+
+    Octokit::Client.any_instance.expects(:pull_request_files).with(@repo_name, pr_number).returns(pr_files)
+
+    # Act
+    result = @github_service.get_pr_files(1)
+
+    # Assert
+    assert_equal pr_files, result
   end
 
   def test_get_ref_from_contents_url_should_return_ref_given_valid_contents_url
@@ -269,23 +306,6 @@ class GithubServiceTest < BaseGemTest
       author: {
         login: login
       }
-    }
-  end
-
-  def create_pull_request_hash(username, body, number)
-    {
-      user: {
-        login: username
-      },
-      body: body,
-      number: number
-    }
-  end
-
-  def create_pull_request_file_hash(ref, filename)
-    {
-      contents_url: "http://example.com?ref=#{ref}",
-      filename: filename
     }
   end
 
