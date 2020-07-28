@@ -40,10 +40,10 @@ class PostServiceTest < BaseGemTest
       Services::GithubService.any_instance.expects(:get_contents_from_path)
                              .with('_posts')
                              .returns([post1, post2, post3])
-      Services::GithubService.any_instance.expects(:contents)
+      Services::GithubService.any_instance.expects(:get_contents_from_path)
                      .with('assets/img/My File1.jpg')
                      .returns(image1_content)
-      Services::GithubService.any_instance.expects(:contents)
+      Services::GithubService.any_instance.expects(:get_contents_from_path)
                              .with('assets/img/My File2.jpg')
                              .returns(image2_content)
       
@@ -84,35 +84,28 @@ class PostServiceTest < BaseGemTest
       image_content = create_dummy_api_resource(content: 'imagecontents', path: 'sample.jpeg')
       post_model = create_post_model(title: 'post', author: 'Andy Wojciechowski', hero: 'hero',
                                      overlay: 'overlay', contents: '#post', tags: %w[announcement info])
+      pr_files = [
+        create_pull_request_file_hash('myref', 'sample.md'),
+        create_pull_request_file_hash('myref', 'sample.jpeg') 
+      ]
+
+      Services::GithubService.any_instance.expects(:get_open_pull_requests_with_body).with(pr_body)
+                             .returns([create_pull_request_hash('andy-wojciechowski', pr_body, 3)])
   
-      Octokit::Client.any_instance.expects(:pull_requests).with(@repo_name, state: 'open')
-                     .returns([create_pull_request_hash('andy-wojciechowski', 'My Pull Request Body', 2),
-                               create_pull_request_hash('andy-wojciechowski',
-                                                        pr_body, 3)])
-  
-      Octokit::Client.any_instance.expects(:pull_request_files).with(@repo_name, 1)
-                     .returns([]).never
-      Octokit::Client.any_instance.expects(:pull_request_files).with(@repo_name, 2)
-                     .returns([]).never
-      Octokit::Client.any_instance.expects(:pull_request_files).with(@repo_name, 3).returns([
-                                                                                              create_pull_request_file_hash('myref', 'sample.md'),
-                                                                                              create_pull_request_file_hash('myref', 'sample.jpeg')
-                                                                                            ])
-  
-      Octokit::Client.any_instance.expects(:contents)
-                     .with(@repo_name, path: 'sample.md', ref: 'myref')
-                     .returns(post_content)
-  
-      Octokit::Client.any_instance.expects(:contents)
-                     .with(@repo_name, path: 'sample.jpeg', ref: 'myref')
-                     .returns(image_content)
-  
-      Base64.expects(:decode64).with('PR base 64 content').returns('PR content')
+      Services::GithubService.any_instance.expects(:get_pr_files).with(@repo_name, 3).returns(pr_files)
+      
+      Services::GithubService.any_instance.expects(:get_ref_from_contents_url).with(pr_files[0][:contents_url]).returns('myref')
+      Services::GithubService.any_instance.expects(:get_contents_from_path).with('sample.md', 'myref').returns(post_content)
+      
+      Services::GithubService.any_instance.expects(:get_ref_from_contents_url).with(pr_files[1][:contents_url]).returns('myref')
+      Services::GithubService.any_instance.expects(:get_contents_from_path).with('sample.jpeg', 'myref').returns(image_content)
+      
+      Services::GithubService.any_instance.expects(:get_text_content_from_file).with('sample.md', 'myref').returns('PR content')
       Factories::PostFactory.any_instance.expects(:create_post)
                             .with('PR content', 'sample.md', 'myref').returns(post_model)
   
       # Act
-      result = @github_service.get_all_posts_in_pr(pr_body)
+      result = @post_service.get_all_posts_in_pr(pr_body)
   
       # Assert
       assert_equal [post_model], result
@@ -130,10 +123,10 @@ class PostServiceTest < BaseGemTest
       post3_model = create_post_model(title: 'post 3', author: 'Sabrina Stangler', hero: 'hero 3',
                                       overlay: 'overlay 3', contents: '###post3', tags: ['info'])
   
-      @github_service.expects(:get_all_posts).returns([post1_model, post2_model, post3_model])
+      @post_service.expects(:get_all_posts).returns([post1_model, post2_model, post3_model])
   
       # Act
-      result = @github_service.get_post_by_title('a very fake post', nil)
+      result = @post_service.get_post_by_title('a very fake post', nil)
   
       # Assert
       assert_nil result
@@ -148,10 +141,10 @@ class PostServiceTest < BaseGemTest
       post3_model = create_post_model(title: 'post 3', author: 'Sabrina Stangler', hero: 'hero 3',
                                       overlay: 'overlay 3', contents: '###post3', tags: ['info'])
   
-      @github_service.expects(:get_all_posts).returns([post1_model, post2_model, post3_model])
+      @post_service.expects(:get_all_posts).returns([post1_model, post2_model, post3_model])
   
       # Act
-      result = @github_service.get_post_by_title('post 2', nil)
+      result = @post_service.get_post_by_title('post 2', nil)
   
       # Assert
       assert_equal post2_model, result
@@ -166,10 +159,10 @@ class PostServiceTest < BaseGemTest
       post3_model = create_post_model(title: 'post 3', author: 'Sabrina Stangler', hero: 'hero 3',
                                       overlay: 'overlay 3', contents: '###post3', tags: ['info'])
   
-      @github_service.expects(:get_all_posts_in_pr).returns([post1_model, post2_model, post3_model])
+      @post_service.expects(:get_all_posts_in_pr).returns([post1_model, post2_model, post3_model])
   
       # Act
-      result = @github_service.get_post_by_title('a very fake post', 'ref')
+      result = @post_service.get_post_by_title('a very fake post', 'ref')
   
       # Assert
       assert_nil result
@@ -184,10 +177,10 @@ class PostServiceTest < BaseGemTest
       post3_model = create_post_model(title: 'post 3', author: 'Sabrina Stangler', hero: 'hero 3',
                                       overlay: 'overlay 3', contents: '###post3', tags: ['info'])
   
-      @github_service.expects(:get_all_posts_in_pr).returns([post1_model, post2_model, post3_model])
+      @post_service.expects(:get_all_posts_in_pr).returns([post1_model, post2_model, post3_model])
   
       # Act
-      result = @github_service.get_post_by_title('post 2', 'ref')
+      result = @post_service.get_post_by_title('post 2', 'ref')
   
       # Assert
       assert_equal post2_model, result
