@@ -16,6 +16,8 @@ gem 'faraday', '~> 0.17.1'
 
 gem 'rake'
 
+gem 'rdoc'
+
 group :test do
   gem 'minitest'
   gem 'mocha'
