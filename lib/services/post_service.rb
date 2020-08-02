@@ -1,5 +1,4 @@
 require_relative '../factories/post_factory'
-require 'kramdown_service'
 
 module Services
   class PostService < BaseEditingService

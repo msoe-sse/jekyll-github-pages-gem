@@ -41,7 +41,7 @@ end
 
 module Services
   ##
-  # This class contains all operations with interacting with the kramdown engine
+  # This class contains operations related to the kramdown engines
   class KramdownService
     DEFAULT_HERO = 'https://source.unsplash.com/collection/145103/'
     ##
@@ -91,75 +91,8 @@ module Services
       result.compact
     end
 
-    ##
-    # This method takes parameters for a given post and formats them
-    # as a valid jekyll post for a Jekyll website
-    #
-    # Params:
-    # +text+:: the markdown contents of the post
-    # +author+:: the author of the post
-    # +title+:: the title of the post
-    # +tags+:: tags specific to the post
-    # +overlay+:: the overlay color of the post
-    # +hero+:: a link to an optional background image for a post
-    def create_jekyll_post_text(text, author, title, tags, overlay, hero)
-      header_converted_text = fix_header_syntax(text)
-      header_converted_text = add_line_break_to_markdown_if_necessary(header_converted_text)
-
-      parsed_tags = parse_tags(tags)
-
-      tag_section = %(tags:
-#{parsed_tags})
-
-      lead_break_section = "{: .lead}\r\n<!–-break-–>"
-
-      hero_to_use = hero
-      hero_to_use = DEFAULT_HERO if hero_to_use.empty?
-      result = %(---
-layout: post
-title: #{title}
-author: #{author}\r\n)
-
-      result += "#{tag_section}\r\n" unless parsed_tags.empty?
-      result += %(hero: #{hero_to_use}
-overlay: #{overlay.downcase}
-published: true
----
-#{lead_break_section}
-#{header_converted_text})
-
-      result
-    end
-
     private
-
-    def parse_tags(tags)
-      tag_array = tags.split(',')
-      result = ''
-      tag_array.each do |tag|
-        result += "  - #{tag.strip}"
-        result += "\r\n" if tag != tag_array.last
-      end
-      result
-    end
-
-    def fix_header_syntax(text)
-      document = Kramdown::Document.new(text)
-      header_elements = document.root.children.select { |x| x.type == :header }
-      lines = text.split("\n")
-      lines = lines.map do |line|
-        if header_elements.any? { |x| line.include? x.options[:raw_text] }
-          # This regex matches the line into 2 groups with the first group being the repeating #
-          # characters and the beginning of the string and the second group being the rest of the string
-          line_match = line.match(/(#*)(.*)/)
-          line = "#{line_match.captures.first} #{line_match.captures.last.strip}"
-        else
-          line.delete("\r\n")
-        end
-      end
-      lines.join("\r\n")
-    end
-
+    
     def get_document_descendants(current_element, result)
       current_element.children.each do |element|
         result << element
@@ -169,18 +102,6 @@ published: true
 
     def get_filename_for_image_tag(image_el)
       File.basename(image_el.attr['src'])
-    end
-
-    def add_line_break_to_markdown_if_necessary(markdown)
-      lines = markdown.split("\n")
-      # The regular expression in the if statement looks for a markdown reference to a link like
-      # [logo]: https://ieeextreme.org/wp-content/uploads/2019/05/Xtreme_colour-e1557478323964.png
-      # If a post starts with that reference in jekyll followed by an image using that reference
-      # the line below will be interperted as a paragraph tag instead of an image tag. To fix that
-      # we add a line break to the start of the markdown.
-      return "\r\n#{markdown}" if lines.first&.match?(/\[(.*)\]: (.*)/)
-
-      markdown
     end
   end
 end

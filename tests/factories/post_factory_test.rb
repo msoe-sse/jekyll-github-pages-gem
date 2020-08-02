@@ -86,4 +86,186 @@ overlay: green\r
     assert_equal "green\r", result.overlay
     assert_equal "#An H1 tag\r\n##An H2 tag", result.contents
   end
+
+  def test_create_jekyll_post_text_should_return_text_for_a_formatted_post
+    # Arrange
+    expected_post = %(---
+layout: post
+title: Some Post
+author: Andy Wojciechowski\r
+hero: https://source.unsplash.com/collection/145103/
+overlay: green
+published: true
+---
+#{LEAD_BREAK_SECTION}
+# An H1 tag\r
+##An H2 tag)
+
+    # Act
+    result = @kramdown_service.create_jekyll_post_text("#An H1 tag\r\n##An H2 tag", 'Andy Wojciechowski',
+                                                       'Some Post', '', 'green', '', true, true)
+
+    # Assert
+    assert_equal expected_post, result
+  end
+
+  def test_create_jekyll_post_text_should_return_a_formatted_post_given_valid_post_tags
+    # Arrange
+    expected_post = %(---
+layout: post
+title: Some Post
+author: Andy Wojciechowski\r
+tags:
+  - announcement\r
+  - info\r
+  - hack n tell\r
+hero: https://source.unsplash.com/collection/145103/
+overlay: green
+published: true
+---
+#{LEAD_BREAK_SECTION}
+# An H1 tag\r
+##An H2 tag)
+    # Act
+    result = @kramdown_service.create_jekyll_post_text("#An H1 tag\r\n##An H2 tag",
+                                                       'Andy Wojciechowski',
+                                                       'Some Post',
+                                                       'announcement, info,    hack n tell     ',
+                                                       'green', '', true, true)
+    # Assert
+    assert_equal expected_post, result
+  end
+
+  def test_create_jekyll_post_text_should_add_a_space_after_the_hash_symbol_indicating_header_tag
+    # Arrange
+    expected_post = %(---
+layout: post
+title: Some Post
+author: Andy Wojciechowski\r
+hero: https://source.unsplash.com/collection/145103/
+overlay: green
+published: true
+---
+#{LEAD_BREAK_SECTION}
+# H1 header\r
+\r
+## H2 header\r
+\r
+### H3 header\r
+\r
+#### H4 header\r
+\r
+##### H5 header\r
+\r
+###### H6 header)
+
+    markdown_text = %(#H1 header\r
+\r
+##H2 header\r
+\r
+###H3 header\r
+\r
+####H4 header\r
+\r
+#####H5 header\r
+\r
+######H6 header)
+
+    # Act
+    result = @kramdown_service.create_jekyll_post_text(markdown_text, 'Andy Wojciechowski', 'Some Post', '', 'green', '', true, true)
+
+    # Assert
+    assert_equal expected_post, result
+  end
+
+  def test_create_jekyll_post_text_should_only_add_one_space_after_a_header
+    # Arrange
+    expected_post = %(---
+layout: post
+title: Some Post
+author: Andy Wojciechowski\r
+tags:
+  - announcement\r
+  - info\r
+hero: https://source.unsplash.com/collection/145103/
+overlay: green
+published: true
+---
+#{LEAD_BREAK_SECTION}
+# An H1 tag\r
+##An H2 tag)
+    # Act
+    result = @kramdown_service.create_jekyll_post_text("# An H1 tag\r\n##An H2 tag",
+                                                       'Andy Wojciechowski', 'Some Post',
+                                                       'announcement, info', 'green', '', true, true)
+    # Assert
+    assert_equal expected_post, result
+  end
+
+  def test_create_jekyll_post_text_should_substitute_the_given_hero_if_its_not_empty
+    # Arrange
+    expected_post = %(---
+layout: post
+title: Some Post
+author: Andy Wojciechowski\r
+tags:
+  - announcement\r
+  - info\r
+hero: bonk
+overlay: green
+published: true
+---
+#{LEAD_BREAK_SECTION}
+# An H1 tag\r
+##An H2 tag)
+    # Act
+    result = @kramdown_service.create_jekyll_post_text("# An H1 tag\r\n##An H2 tag",
+                                                       'Andy Wojciechowski', 'Some Post',
+                                                       'announcement, info', 'green', 'bonk', true, true)
+    # Assert
+    assert_equal expected_post, result
+  end
+
+  def test_create_jekyll_post_text_should_add_a_line_break_before_a_reference_style_img_if_markdown_starts_with_a_reference_style_img
+    image_tag = "\r\n![alt text][logo]"
+    markdown = "[logo]: https://ieeextreme.org/wp-content/uploads/2019/05/Xtreme_colour-e1557478323964.png#{image_tag}"
+
+    # Arrange
+    expected_post = %(---
+layout: post
+title: Some Post
+author: Andy Wojciechowski\r
+tags:
+  - announcement\r
+  - info\r
+hero: bonk
+overlay: green
+published: true
+---
+#{LEAD_BREAK_SECTION}
+\r
+#{markdown})
+
+    # Act
+    result = @kramdown_service.create_jekyll_post_text(markdown, 'Andy Wojciechowski', 'Some Post',
+                                                       'announcement, info', 'green', 'bonk', true, true)
+    # Assert
+    assert_equal expected_post, result
+  end
+
+  def test_create_jekyll_post_text_should_create_valid_post_when_all_optional_parameters_are_not_supplied
+    # Arrange
+    expected_post = %(---
+layout: post
+title: Some Post
+author: Andy Wojciechowski\r
+---
+# An H1 Tag)
+      
+    # Act
+    result = @kramdown_service.create_jekyll_post_text('# An H1 Tag', 'Andy Wojciechowski', 'Some Post')
+    
+    # Assert
+    assert_equal expected_post, result
+  end
 end
