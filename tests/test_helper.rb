@@ -110,7 +110,7 @@ class BaseGemTest < MiniTest::Test
       filename: filename
     }
   end
-  
+
   def create_pull_request_hash(username, body, number)
     {
       user: {
@@ -120,14 +120,14 @@ class BaseGemTest < MiniTest::Test
       number: number
     }
   end
-  
+
   def create_dummy_api_resource(parameters)
     resource = DummyApiResource.new
     resource.path = parameters[:path]
     resource.content = parameters[:content]
     resource
   end
-  
+
   ##
   # Represents a dummy API resource object from Octokit
   class DummyApiResource

@@ -37,9 +37,9 @@ module Factories
     def create_jekyll_post_text(text, author, title, tags = nil, overlay = nil, hero = nil, set_published_property = false, append_lead_break_section = false)
       header_converted_text = fix_header_syntax(text)
       header_converted_text = add_line_break_to_markdown_if_necessary(header_converted_text)
-      
+
       parsed_tags = nil
-      parsed_tags = format_tags(tags) unless !tags
+      parsed_tags = format_tags(tags) if tags
 
       tag_section = %(tags:
 #{parsed_tags})
@@ -47,18 +47,18 @@ module Factories
       lead_break_section = "{: .lead}\r\n<!–-break-–>"
 
       hero_to_use = hero
-      hero_to_use = DEFAULT_HERO if hero_to_use && hero_to_use.empty?
+      hero_to_use = DEFAULT_HERO if hero_to_use&.empty?
       result = %(---
 layout: post
 title: #{title}
 author: #{author}\r\n)
 
       result += "#{tag_section}\r\n" unless !parsed_tags || parsed_tags.empty?
-      result += "hero: #{hero_to_use}\n" unless !hero_to_use
-      result += "overlay: #{overlay}\n" unless !overlay
-      result += "published: true\n" unless !set_published_property
+      result += "hero: #{hero_to_use}\n" if hero_to_use
+      result += "overlay: #{overlay}\n" if overlay
+      result += "published: true\n" if set_published_property
       result += "---\n"
-      result += "#{lead_break_section}\n" unless !append_lead_break_section
+      result += "#{lead_break_section}\n" if append_lead_break_section
       result += header_converted_text
 
       result
@@ -74,7 +74,7 @@ author: #{author}\r\n)
       end
       result.join(', ')
     end
-    
+
     def format_tags(tags)
       tag_array = tags.split(',')
       result = ''

@@ -103,7 +103,7 @@ published: true
 
     # Act
     result = @post_factory.create_jekyll_post_text("#An H1 tag\r\n##An H2 tag", 'Andy Wojciechowski',
-                                                       'Some Post', '', 'green', '', true, true)
+                                                   'Some Post', '', 'green', '', true, true)
 
     # Assert
     assert_equal expected_post, result
@@ -128,10 +128,10 @@ published: true
 ##An H2 tag)
     # Act
     result = @post_factory.create_jekyll_post_text("#An H1 tag\r\n##An H2 tag",
-                                                       'Andy Wojciechowski',
-                                                       'Some Post',
-                                                       'announcement, info,    hack n tell     ',
-                                                       'green', '', true, true)
+                                                   'Andy Wojciechowski',
+                                                   'Some Post',
+                                                   'announcement, info,    hack n tell     ',
+                                                   'green', '', true, true)
     # Assert
     assert_equal expected_post, result
   end
@@ -196,8 +196,8 @@ published: true
 ##An H2 tag)
     # Act
     result = @post_factory.create_jekyll_post_text("# An H1 tag\r\n##An H2 tag",
-                                                       'Andy Wojciechowski', 'Some Post',
-                                                       'announcement, info', 'green', '', true, true)
+                                                   'Andy Wojciechowski', 'Some Post',
+                                                   'announcement, info', 'green', '', true, true)
     # Assert
     assert_equal expected_post, result
   end
@@ -220,8 +220,8 @@ published: true
 ##An H2 tag)
     # Act
     result = @post_factory.create_jekyll_post_text("# An H1 tag\r\n##An H2 tag",
-                                                       'Andy Wojciechowski', 'Some Post',
-                                                       'announcement, info', 'green', 'bonk', true, true)
+                                                   'Andy Wojciechowski', 'Some Post',
+                                                   'announcement, info', 'green', 'bonk', true, true)
     # Assert
     assert_equal expected_post, result
   end
@@ -248,7 +248,7 @@ published: true
 
     # Act
     result = @post_factory.create_jekyll_post_text(markdown, 'Andy Wojciechowski', 'Some Post',
-                                                       'announcement, info', 'green', 'bonk', true, true)
+                                                   'announcement, info', 'green', 'bonk', true, true)
     # Assert
     assert_equal expected_post, result
   end
@@ -261,7 +261,7 @@ title: Some Post
 author: Andy Wojciechowski\r
 ---
 # An H1 Tag)
-      
+
     # Act
     result = @post_factory.create_jekyll_post_text('# An H1 Tag', 'Andy Wojciechowski', 'Some Post')
 

@@ -92,7 +92,7 @@ module Services
     end
 
     private
-    
+
     def get_document_descendants(current_element, result)
       current_element.children.each do |element|
         result << element

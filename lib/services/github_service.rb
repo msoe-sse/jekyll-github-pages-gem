@@ -117,7 +117,7 @@ module Services
       ref_response = @client.refs(@full_repo_name).find { |x| x[:object][:sha] == ref_sha }
       ref_response[:ref].match(%r{refs/(.*)}).captures.first
     end
-    
+
     ##
     # This method will fetch and decode contents of a given file with text contents on GitHub.
     # By default, it will fetch the file contents from the master branch unless a ref to a branch
@@ -128,14 +128,14 @@ module Services
     # +ref+::an optional ref to a branch to fetch the file from
     def get_text_contents_from_file(file_path, ref = nil)
       api_contents = nil
-      if ref 
-        api_contents = @client.contents(@full_repo_name, path: file_path, ref: ref)
-      else
-        api_contents = @client.contents(@full_repo_name, path: file_path)
-      end
+      api_contents = if ref
+                       @client.contents(@full_repo_name, path: file_path, ref: ref)
+                     else
+                       @client.contents(@full_repo_name, path: file_path)
+                     end
       Base64.decode64(api_contents.content).dup.force_encoding('UTF-8')
     end
-    
+
     ##
     # This method will fetch the GitHub contents for a given file on GitHub via the GitHub
     # contents API. The full response from the API will be returned
@@ -145,7 +145,7 @@ module Services
     def get_contents_from_path(path)
       @client.contents(@full_repo_name, path: path)
     end
-    
+
     ##
     # This method will fetch all open pull requests for the current user matching a specific PR body
     #
@@ -155,7 +155,7 @@ module Services
       open_pull_requests = @client.pull_requests(@full_repo_name, state: 'open')
       open_pull_requests.select { |x| x[:body] == pull_request_body && x[:user][:login] == @client.user[:login] }
     end
-    
+
     ##
     # This method will fetch all pull request files for a given pull request
     #
@@ -164,7 +164,7 @@ module Services
     def get_pr_files(pr_number)
       @client.pull_request_files(@full_repo_name, pr_number)
     end
-    
+
     ##
     # Parses the URL for a file's contents to determine the ref of the file
     # The ref is used to determine what branch the file is located on

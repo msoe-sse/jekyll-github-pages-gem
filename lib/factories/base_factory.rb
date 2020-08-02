@@ -1,6 +1,10 @@
+# frozen_string_literal: true
+
 require 'kramdown'
 
 module Factories
+  ##
+  # The base class for all jekyll factories
   class BaseFactory
     protected
 

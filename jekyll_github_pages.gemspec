@@ -8,7 +8,7 @@ Gem::Specification.new do |s|
   s.require_paths = ['lib']
   s.licenses = ['MIT']
   s.authors = ['MSOE SSE Web Team']
+  s.add_runtime_dependency('carrierwave', '>= 2.0.0.rc', '< 3.0')
   s.add_runtime_dependency('kramdown', '~> 2.3.0')
   s.add_runtime_dependency('octokit', '~> 4.18')
-  s.add_runtime_dependency('carrierwave', '>= 2.0.0.rc', '< 3.0')
 end

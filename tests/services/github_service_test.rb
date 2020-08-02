@@ -177,7 +177,7 @@ class GithubServiceTest < BaseGemTest
     # Assert
     assert_equal 'heads/branch2', result
   end
-  
+
   def test_get_text_contents_from_file_should_return_contents_from_default_branch_when_not_given_ref
     # Arrange
     file_path = '_posts/mypost.md'
@@ -198,7 +198,7 @@ class GithubServiceTest < BaseGemTest
     ref = 'ref'
     file_path = '_posts/mypost.md'
     contents = create_dummy_api_resource(path: file_path, content: 'post base 64 content')
-    
+
     Octokit::Client.any_instance.expects(:contents).with(@repo_name, path: file_path, ref: ref).returns(contents)
     Base64.expects(:decode64).with('post base 64 content').returns('post content')
 
@@ -278,7 +278,7 @@ class GithubServiceTest < BaseGemTest
   end
 
   private
-  
+
   def create_blob_info_hash(file_path, blob_sha)
     { path: file_path,
       mode: '100644',
