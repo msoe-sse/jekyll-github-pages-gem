@@ -39,7 +39,7 @@ module Factories
       # The following regular expressions in this method look for specific properities
       # located in the post header.
       page_model.title = header.match(/title:\s*(.*)(\r\n|\r|\n)/).captures.first
-      page_model.permalink = header.match(/title:\s*(.*)(\r\n|\r|\n)/).captures.first
+      page_model.permalink = header.match(/permalink:\s*(.*)(\r\n|\r|\n)/).captures.first
     end
   end
 end
