@@ -37,7 +37,7 @@ module Services
         new_tree_sha = create_new_tree(file_contents, page_title, file_path, sha_base_tree)
         @github_service.commit_and_push_to_repo("Edited page #{page_title}", new_tree_sha, ref, ref_name)
       else
-        branch_name = "editPage#{post_title.gsub(/\s+/, '')}"
+        branch_name = "editPage#{page_title.gsub(/\s+/, '')}"
         ref_name = "heads/#{branch_name}"
 
         master_head_sha = @github_service.get_master_head_sha
@@ -47,7 +47,7 @@ module Services
         new_tree_sha = create_new_tree(file_contents, page_title, file_path, sha_base_tree)
 
         @github_service.commit_and_push_to_repo("Edited page #{page_title}", new_tree_sha, master_head_sha, ref_name)
-        @github_service.create_pull_request(branch_name, 'master', "Edited page #{post_title}",
+        @github_service.create_pull_request(branch_name, 'master', "Edited page #{page_title}",
                                             pr_body,
                                             reviewers)
       end

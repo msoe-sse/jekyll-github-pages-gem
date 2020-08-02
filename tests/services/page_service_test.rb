@@ -87,6 +87,51 @@ class PageServiceTest < BaseGemTest
     assert_equal page_model, result
   end
 
+  def test_save_page_update_should_update_branch_when_given_a_ref
+    # Arrange
+    Services::GithubService.any_instance.expects(:get_ref_name_by_sha).with('my ref').returns('heads/editPageAbout')
+    Services::GithubService.any_instance.expects(:get_base_tree_for_branch).with('my ref').returns('master tree sha')
+    Services::GithubService.any_instance.expects(:create_text_blob).with('# hello').returns('page blob sha')
+    Services::GithubService.any_instance.expects(:create_new_tree_with_blobs)
+                           .with([create_file_info_hash('about.md', 'page blob sha')], 'master tree sha')
+                           .returns('new tree sha')
+    Services::GithubService.any_instance.expects(:commit_and_push_to_repo)
+                           .with('Edited page about', 'new tree sha',
+                                 'my ref', 'heads/editPageAbout').once
+
+    # Act
+    @page_service.save_page_update('about.md', 'about', '# hello', 'my ref')
+
+    # No Assert - taken care of with mocha mock setups
+  end
+
+  def test_save_page_update_should_edit_post_and_create_a_pull_request_when_not_given_a_ref
+    # Arrange
+    Services::GithubService.any_instance.expects(:get_master_head_sha).returns('master head sha')
+    Services::GithubService.any_instance.expects(:get_base_tree_for_branch)
+                           .with('master head sha').returns('master tree sha')
+    Services::GithubService.any_instance.expects(:create_ref_if_necessary)
+                           .with('heads/editPageAbout', 'master head sha').once
+    Services::GithubService.any_instance.expects(:create_text_blob).with('# hello').returns('page blob sha')
+    Services::GithubService.any_instance.expects(:create_new_tree_with_blobs)
+                           .with([create_file_info_hash('about.md', 'page blob sha')], 'master tree sha')
+                           .returns('new tree sha')
+    Services::GithubService.any_instance.expects(:commit_and_push_to_repo)
+                           .with('Edited page About', 'new tree sha',
+                                 'master head sha', 'heads/editPageAbout').once
+    Services::GithubService.any_instance.expects(:create_pull_request)
+                           .with('editPageAbout',
+                                 'master',
+                                 'Edited page About',
+                                 @pr_body,
+                                 @reviewers).once
+
+    # Act
+    @page_service.save_page_update('about.md', 'About', '# hello', nil, @pr_body, @reviewers)
+
+    # No Assert - taken care of with mocha mock setups
+  end
+
   private
 
   def create_page_model(parameters)
