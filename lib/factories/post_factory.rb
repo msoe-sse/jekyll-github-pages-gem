@@ -34,7 +34,8 @@ module Factories
     # +tags+:: optional tags specific to the post
     # +overlay+:: the optional overlay color of the post
     # +hero+:: a link to an optional background image for a post
-    def create_jekyll_post_text(text, author, title, tags = nil, overlay = nil, hero = nil, set_published_property = false, append_lead_break_section = false)
+    def create_jekyll_post_text(text, author, title, tags = nil, overlay = nil,
+                                hero = nil, set_published_property = false, append_lead_break_section = false)
       header_converted_text = fix_header_syntax(text)
       header_converted_text = add_line_break_to_markdown_if_necessary(header_converted_text)
 

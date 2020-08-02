@@ -18,7 +18,7 @@ Naming/AccessorMethodName:
     Enabled: No
 
 Metrics/ParameterLists:
-    Max: 7
+    Max: 10
     
 Metrics/AbcSize:
     Max: 30
@@ -45,3 +45,9 @@ Style/HashTransformValues:
     
 Style/RaiseArgs:
     EnforcedStyle: compact
+
+Metrics/CyclomaticComplexity:
+    Max: 10
+
+Metrics/PerceivedComplexity:
+    Max: 10
