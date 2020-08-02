@@ -11,6 +11,14 @@ module Services
       @page_factory = Factories::PageFactory.new
     end
 
+    ##
+    # Returns a given page from a Jekyll website from the default branch unless a pull request body
+    # is specified. In that case then it will return the page from the source branch of the first open
+    # pull request matching the given body
+    #
+    # Params:
+    # +file_path+:: the path to the file in a GitHub repository
+    # +pr_body+:: an optional parameter indicating the pull request body of any updates to a given page, defaults to nil
     def get_markdown_page(file_path, pr_body = nil)
       if pr_body
         open_prs = @github_service.get_open_pull_requests_with_body(pr_body)
@@ -29,6 +37,16 @@ module Services
       @page_factory.create_page(text_contents, nil)
     end
 
+    ##
+    # Saves a given page update by updating the page contents and creating a pull request into master
+    # if a ref is not given. Otherwise if a ref is supplied it will update the branch matching the given ref without creating a pull request.
+    #
+    # Params:
+    # +file_path+:: the path to the file in a GitHub repository
+    # +page_title+:: the title of the page
+    # +ref+::an optional branch indicating the page should be updated on a branch that's not the default branch, defaults to nil
+    # +pr_body+::an optional pull request body when updating the page on the default branch, defaults to an empty string
+    # +reviewers+::an optional array of reviewers for opening a pull request when updating the page on the default branch, defaults to no reviewers
     def save_page_update(file_path, page_title, file_contents, ref = nil, pr_body = '', reviewers = [])
       if ref
         ref_name = @github_service.get_ref_name_by_sha(ref)

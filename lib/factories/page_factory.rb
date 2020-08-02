@@ -16,6 +16,14 @@ module Factories
       create_page_model(page_contents, github_ref) if !page_contents.nil? && page_contents.is_a?(String)
     end
 
+    ##
+    # This method takes parameters for a given page and formats them
+    # as a valid page for a Jekyll website
+    #
+    # Params:
+    # +text+:: the required markdown contents of the post
+    # +title+:: the required title of the post
+    # +permalink+:: the link to the page on a Jekyll website (e.g /about)
     def create_jekyll_page_text(text, title, permalink)
       header_converted_text = fix_header_syntax(text)
       header_converted_text = add_line_break_to_markdown_if_necessary(header_converted_text)

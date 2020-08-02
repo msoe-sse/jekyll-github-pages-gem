@@ -25,15 +25,17 @@ module Factories
 
     ##
     # This method takes parameters for a given post and formats them
-    # as a valid jekyll post for a Jekyll website
+    # as a valid post for a Jekyll website
     #
     # Params:
     # +text+:: the required markdown contents of the post
     # +author+:: the required author of the post
     # +title+:: the required title of the post
-    # +tags+:: optional tags specific to the post
-    # +overlay+:: the optional overlay color of the post
-    # +hero+:: a link to an optional background image for a post
+    # +tags+:: optional tags specific to the post, defaults to nil
+    # +overlay+:: the optional overlay color of the post, defaults to nil
+    # +hero+:: a link to an optional background image for a post, defaults to nil
+    # +set_published_property+::an optional flag to set the published: true property for a post, defaults to false
+    # +append_lead_break_section+::an optional flag indicating whether to append to lead break section to a post, default to false
     def create_jekyll_post_text(text, author, title, tags = nil, overlay = nil,
                                 hero = nil, set_published_property = false, append_lead_break_section = false)
       header_converted_text = fix_header_syntax(text)
