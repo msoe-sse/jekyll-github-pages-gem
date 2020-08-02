@@ -3,7 +3,7 @@
 source 'https://rubygems.org'
 gemspec
 
-gem 'kramdown'
+gem 'kramdown', '~> 2.3.0'
 
 gem 'octokit', '~> 4.18'
 
