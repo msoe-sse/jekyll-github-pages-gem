@@ -16,6 +16,18 @@ module Factories
       create_page_model(page_contents, github_ref) if !page_contents.nil? && page_contents.is_a?(String)
     end
 
+    def create_jekyll_page_text(text, title, permalink)
+      header_converted_text = fix_header_syntax(text)
+      header_converted_text = add_line_break_to_markdown_if_necessary(header_converted_text)
+
+      %(---
+layout: page
+title: #{title}
+permalink: #{permalink}
+---
+#{header_converted_text})
+    end
+
     private
 
     def create_page_model(page_contents, github_ref)

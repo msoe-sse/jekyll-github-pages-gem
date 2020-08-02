@@ -62,4 +62,79 @@ permalink: /about/\r
     assert_equal "/about/\r", result.permalink
     assert_equal "#An H1 tag\r\n##An H2 tag", result.contents
   end
+
+  def test_create_jekyll_page_text_should_return_text_for_a_formatted_page
+    # Arrange
+    expected_page = %(---
+layout: page
+title: About
+permalink: /about/
+---
+# An H1 tag\r
+##An H2 tag)
+
+    # Act
+    result = @page_factory.create_jekyll_page_text("#An H1 tag\r\n##An H2 tag", 'About', '/about/')
+
+    # Assert
+    assert_equal expected_page, result
+  end
+
+  def test_create_jekyll_page_text_should_add_a_space_after_the_hash_symbol_indicating_header_tag
+    # Arrange
+    expected_page = %(---
+layout: page
+title: About
+permalink: /about/
+---
+# H1 header\r
+\r
+## H2 header\r
+\r
+### H3 header\r
+\r
+#### H4 header\r
+\r
+##### H5 header\r
+\r
+###### H6 header)
+    
+  markdown_text = %(#H1 header\r
+\r
+##H2 header\r
+\r
+###H3 header\r
+\r
+####H4 header\r
+\r
+#####H5 header\r
+\r
+######H6 header)
+
+    # Act
+    result = @page_factory.create_jekyll_page_text(markdown_text, 'About', '/about/')
+
+    # Assert
+    assert_equal expected_page, result
+  end
+
+  def test_create_jekyll_page_text_should_add_a_line_break_before_a_reference_style_img_if_markdown_starts_with_a_reference_style_img
+    # Arrange
+    image_tag = "\r\n![alt text][logo]"
+    markdown = "[logo]: https://ieeextreme.org/wp-content/uploads/2019/05/Xtreme_colour-e1557478323964.png#{image_tag}"
+
+    expected_page = %(---
+layout: page
+title: About
+permalink: /about/
+---
+\r
+#{markdown})
+
+    # Act
+    result = @page_factory.create_jekyll_page_text(markdown, 'About', '/about/')
+
+    # Assert
+    assert_equal expected_page, result
+  end
 end
