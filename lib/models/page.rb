@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+##
+# An object repsenting a page on a Jekyll website
 class Page
   attr_accessor :title
   attr_accessor :permalink

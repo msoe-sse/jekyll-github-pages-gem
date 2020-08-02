@@ -2,6 +2,8 @@
 
 require_relative '../test_helper'
 
+##
+# Test Class containing unit tests for the PageFactory class
 class PageFactoryTest < BaseGemTest
   def setup
     @page_factory = Factories::PageFactory.new
@@ -98,8 +100,8 @@ permalink: /about/
 ##### H5 header\r
 \r
 ###### H6 header)
-    
-  markdown_text = %(#H1 header\r
+
+    markdown_text = %(#H1 header\r
 \r
 ##H2 header\r
 \r

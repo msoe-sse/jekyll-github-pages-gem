@@ -127,7 +127,6 @@ module Services
     # +file_path+::the path to a file in a GitHub repo
     # +ref+::an optional ref to a branch to fetch the file from
     def get_text_contents_from_file(file_path, ref = nil)
-      api_contents = nil
       api_contents = if ref
                        @client.contents(@full_repo_name, path: file_path, ref: ref)
                      else
