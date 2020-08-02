@@ -12,5 +12,5 @@ If you have questions on how to contribute, please contact admin@msoe-sse.com or
 ## Continuous Integration
 There are checks that will be performed whenever Pull Requests are opened.  To save time on the build server, please run the tests locally to check for errors that will occur in the CI builds.
 
-1. To run [Rubocop](https://github.com/ashmaroli/rubocop-jekyll), run the command `bundle exec rubocop`
+1. To run [Rubocop](https://github.com/ashmaroli/rubocop-jekyll), run the command `bundle exec rubocop`. Note the command `bundle exec rubocop -a` will attempt to automatically fix any offenses found by rubocop but some still need to be resolved manually.
 2. To run all unit tests, run the command `rake`
