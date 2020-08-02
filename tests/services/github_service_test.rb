@@ -240,11 +240,10 @@ class GithubServiceTest < BaseGemTest
     result = @github_service.get_open_pull_requests_with_body('my pr body')
 
     # Assert
-    assert_equal 3, result.length
+    assert_equal 2, result.length
 
     assert_equal open_pull_requests[0], result[0]
-    assert_equal open_pull_requests[2], result[1]
-    assert_equal open_pull_requests[4], result[2]
+    assert_equal open_pull_requests[4], result[1]
   end
 
   def test_get_pr_files_should_return_pull_request_files_when_given_valid_pr_number

@@ -65,7 +65,7 @@ class PostServiceTest < BaseGemTest
                             .with('post 3 text content', '_posts/post3.md', nil).returns(post3_model)
   
       # Act
-      result = @github_service.get_all_posts
+      result = @post_service.get_all_posts
   
       # Assert
       assert_equal [post1_model, post2_model, post3_model], result

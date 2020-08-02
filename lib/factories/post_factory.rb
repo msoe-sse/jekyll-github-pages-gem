@@ -37,8 +37,9 @@ module Factories
     def create_jekyll_post_text(text, author, title, tags = nil, overlay = nil, hero = nil, set_published_property = false, append_lead_break_section = false)
       header_converted_text = fix_header_syntax(text)
       header_converted_text = add_line_break_to_markdown_if_necessary(header_converted_text)
-
-      parsed_tags = format_tags(tags)
+      
+      parsed_tags = nil
+      parsed_tags = format_tags(tags) unless !tags
 
       tag_section = %(tags:
 #{parsed_tags})
@@ -52,7 +53,7 @@ layout: post
 title: #{title}
 author: #{author}\r\n)
 
-      result += "#{tag_section}\r\n" unless parsed_tags.empty?
+      result += "#{tag_section}\r\n" unless !parsed_tags || parsed_tags.empty?
       result += "hero: #{hero_to_use}\n" unless !hero_to_use
       result += "overlay: #{overlay}\n" unless !overlay
       result += "published: true\n" unless !set_published_property

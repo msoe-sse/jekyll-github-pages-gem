@@ -3,9 +3,6 @@
 require_relative '../test_helper'
 
 class PageFactoryTest < BaseGemTest
-  LEAD_BREAK_SECTION1 = "{: .lead}\r\n<!–-break-–>"
-  LEAD_BREAK_SECTION2 = "{: .lead}\n<!–-break-–>"
-
   def setup
     @page_factory = Factories::PageFactory.new
   end
@@ -33,7 +30,6 @@ layout: page
 title: About
 permalink: /about/
 ---
-#{LEAD_BREAK_SECTION1}
 #An H1 tag
 ##An H2 tag)
 
@@ -54,7 +50,6 @@ layout: page\r
 title: About\r
 permalink: /about/\r
 ---\r
-#{LEAD_BREAK_SECTION2}
 #An H1 tag\r
 ##An H2 tag)
 
@@ -63,7 +58,7 @@ permalink: /about/\r
 
     # Assert
     assert_equal 'myref', result.github_ref
-    assert_equal "Some Post\r", result.title
+    assert_equal "About\r", result.title
     assert_equal "/about/\r", result.permalink
     assert_equal "#An H1 tag\r\n##An H2 tag", result.contents
   end
