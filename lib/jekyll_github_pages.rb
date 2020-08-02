@@ -4,6 +4,7 @@
 require 'carrierwave'
 
 # Source Files
+require 'factories/base_factory'
 require 'factories/post_factory'
 require 'factories/page_factory'
 

@@ -121,6 +121,20 @@ class BaseGemTest < MiniTest::Test
     }
   end
   
+  def create_dummy_api_resource(parameters)
+    resource = DummyApiResource.new
+    resource.path = parameters[:path]
+    resource.content = parameters[:content]
+    resource
+  end
+  
+  ##
+  # Represents a dummy API resource object from Octokit
+  class DummyApiResource
+    attr_accessor :path
+    attr_accessor :content
+  end
+
   ##
   # This method will take a carrierwave uploader and mock creating an image blob
   # for that uploader

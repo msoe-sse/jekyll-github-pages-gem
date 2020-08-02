@@ -226,15 +226,15 @@ class GithubServiceTest < BaseGemTest
   def test_get_open_pull_requests_with_body_should_return_all_pull_requests_matching_given_body
     # Arrange
     open_pull_requests = [
-      create_pull_request_hash('andy-wojciechowski', 'my pr body', 1)
-      create_pull_request_hash('GFELMING133', 'my pr body', 2)
-      create_pull_request_hash('andy-wojciechowski', 'my pr body 2', 3)
-      create_pull_request_hash('Joe-Weller', 'my pr body', 4)
+      create_pull_request_hash('andy-wojciechowski', 'my pr body', 1),
+      create_pull_request_hash('GFELMING133', 'my pr body', 2),
+      create_pull_request_hash('andy-wojciechowski', 'my pr body 2', 3),
+      create_pull_request_hash('Joe-Weller', 'my pr body', 4),
       create_pull_request_hash('andy-wojciechowski', 'my pr body', 5)
     ]
 
     Octokit::Client.any_instance.expects(:pull_requests).with(@repo_name, state: 'open').returns(open_pull_requests)
-    Octokit::Client.any_instance.expects(:user).returns({ login: 'andy-wojciechowski' })
+    Octokit::Client.any_instance.expects(:user).returns({ login: 'andy-wojciechowski' }).at_least(1)
 
     # Act
     result = @github_service.get_open_pull_requests_with_body('my pr body')
@@ -279,14 +279,7 @@ class GithubServiceTest < BaseGemTest
   end
 
   private
-
-  def create_dummy_api_resource(parameters)
-    resource = DummyApiResource.new
-    resource.path = parameters[:path]
-    resource.content = parameters[:content]
-    resource
-  end
-
+  
   def create_blob_info_hash(file_path, blob_sha)
     { path: file_path,
       mode: '100644',
@@ -307,12 +300,5 @@ class GithubServiceTest < BaseGemTest
         login: login
       }
     }
-  end
-
-  ##
-  # Represents a dummy API resource object from Octokit
-  class DummyApiResource
-    attr_accessor :path
-    attr_accessor :content
   end
 end

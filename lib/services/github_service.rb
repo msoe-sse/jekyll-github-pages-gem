@@ -76,7 +76,7 @@ module Services
     # +tree_sha+::the sha of the tree to commit
     # +head_sha+::the sha of the head to commit from
     def commit_and_push_to_repo(commit_message, tree_sha, head_sha, ref_name)
-      sha_new_commit = client.create_commit(@full_repo_name, commit_message, tree_sha, head_sha)[:sha]
+      sha_new_commit = @client.create_commit(@full_repo_name, commit_message, tree_sha, head_sha)[:sha]
       @client.update_ref(@full_repo_name, ref_name, sha_new_commit)
     end
 
@@ -90,7 +90,7 @@ module Services
     # +pr_body+::the body for the PR
     # +reviewers+::an array of pull request reviewers for the PR
     def create_pull_request(source_branch, base_branch, pr_title, pr_body, reviewers)
-      pull_number = client.create_pull_request(@full_repo_name, base_branch, source_branch, pr_title, pr_body)[:number]
+      pull_number = @client.create_pull_request(@full_repo_name, base_branch, source_branch, pr_title, pr_body)[:number]
       @client.request_pull_request_review(@full_repo_name, pull_number, reviewers: reviewers)
     end
 

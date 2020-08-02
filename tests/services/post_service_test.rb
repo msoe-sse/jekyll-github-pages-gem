@@ -92,7 +92,7 @@ class PostServiceTest < BaseGemTest
       Services::GithubService.any_instance.expects(:get_open_pull_requests_with_body).with(pr_body)
                              .returns([create_pull_request_hash('andy-wojciechowski', pr_body, 3)])
   
-      Services::GithubService.any_instance.expects(:get_pr_files).with(@repo_name, 3).returns(pr_files)
+      Services::GithubService.any_instance.expects(:get_pr_files).with(3).returns(pr_files)
       
       Services::GithubService.any_instance.expects(:get_ref_from_contents_url).with(pr_files[0][:contents_url]).returns('myref')
       Services::GithubService.any_instance.expects(:get_contents_from_path).with('sample.md', 'myref').returns(post_content)

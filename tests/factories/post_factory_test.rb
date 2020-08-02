@@ -97,12 +97,12 @@ hero: https://source.unsplash.com/collection/145103/
 overlay: green
 published: true
 ---
-#{LEAD_BREAK_SECTION}
+#{LEAD_BREAK_SECTION1}
 # An H1 tag\r
 ##An H2 tag)
 
     # Act
-    result = @kramdown_service.create_jekyll_post_text("#An H1 tag\r\n##An H2 tag", 'Andy Wojciechowski',
+    result = @post_factory.create_jekyll_post_text("#An H1 tag\r\n##An H2 tag", 'Andy Wojciechowski',
                                                        'Some Post', '', 'green', '', true, true)
 
     # Assert
@@ -123,11 +123,11 @@ hero: https://source.unsplash.com/collection/145103/
 overlay: green
 published: true
 ---
-#{LEAD_BREAK_SECTION}
+#{LEAD_BREAK_SECTION1}
 # An H1 tag\r
 ##An H2 tag)
     # Act
-    result = @kramdown_service.create_jekyll_post_text("#An H1 tag\r\n##An H2 tag",
+    result = @post_factory.create_jekyll_post_text("#An H1 tag\r\n##An H2 tag",
                                                        'Andy Wojciechowski',
                                                        'Some Post',
                                                        'announcement, info,    hack n tell     ',
@@ -146,7 +146,7 @@ hero: https://source.unsplash.com/collection/145103/
 overlay: green
 published: true
 ---
-#{LEAD_BREAK_SECTION}
+#{LEAD_BREAK_SECTION1}
 # H1 header\r
 \r
 ## H2 header\r
@@ -172,7 +172,7 @@ published: true
 ######H6 header)
 
     # Act
-    result = @kramdown_service.create_jekyll_post_text(markdown_text, 'Andy Wojciechowski', 'Some Post', '', 'green', '', true, true)
+    result = @post_factory.create_jekyll_post_text(markdown_text, 'Andy Wojciechowski', 'Some Post', '', 'green', '', true, true)
 
     # Assert
     assert_equal expected_post, result
@@ -191,11 +191,11 @@ hero: https://source.unsplash.com/collection/145103/
 overlay: green
 published: true
 ---
-#{LEAD_BREAK_SECTION}
+#{LEAD_BREAK_SECTION1}
 # An H1 tag\r
 ##An H2 tag)
     # Act
-    result = @kramdown_service.create_jekyll_post_text("# An H1 tag\r\n##An H2 tag",
+    result = @post_factory.create_jekyll_post_text("# An H1 tag\r\n##An H2 tag",
                                                        'Andy Wojciechowski', 'Some Post',
                                                        'announcement, info', 'green', '', true, true)
     # Assert
@@ -215,11 +215,11 @@ hero: bonk
 overlay: green
 published: true
 ---
-#{LEAD_BREAK_SECTION}
+#{LEAD_BREAK_SECTION1}
 # An H1 tag\r
 ##An H2 tag)
     # Act
-    result = @kramdown_service.create_jekyll_post_text("# An H1 tag\r\n##An H2 tag",
+    result = @post_factory.create_jekyll_post_text("# An H1 tag\r\n##An H2 tag",
                                                        'Andy Wojciechowski', 'Some Post',
                                                        'announcement, info', 'green', 'bonk', true, true)
     # Assert
@@ -242,12 +242,12 @@ hero: bonk
 overlay: green
 published: true
 ---
-#{LEAD_BREAK_SECTION}
+#{LEAD_BREAK_SECTION1}
 \r
 #{markdown})
 
     # Act
-    result = @kramdown_service.create_jekyll_post_text(markdown, 'Andy Wojciechowski', 'Some Post',
+    result = @post_factory.create_jekyll_post_text(markdown, 'Andy Wojciechowski', 'Some Post',
                                                        'announcement, info', 'green', 'bonk', true, true)
     # Assert
     assert_equal expected_post, result
@@ -263,8 +263,8 @@ author: Andy Wojciechowski\r
 # An H1 Tag)
       
     # Act
-    result = @kramdown_service.create_jekyll_post_text('# An H1 Tag', 'Andy Wojciechowski', 'Some Post')
-    
+    result = @post_factory.create_jekyll_post_text('# An H1 Tag', 'Andy Wojciechowski', 'Some Post')
+
     # Assert
     assert_equal expected_post, result
   end

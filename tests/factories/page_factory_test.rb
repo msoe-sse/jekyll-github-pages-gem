@@ -38,7 +38,7 @@ permalink: /about/
 ##An H2 tag)
 
     # Act
-    result = @page_factory.create_page(post_contents, 'my post.md', 'myref')
+    result = @page_factory.create_page(page_contents, 'myref')
 
     # Assert
     assert_equal 'myref', result.github_ref
@@ -49,7 +49,7 @@ permalink: /about/
 
   def test_create_page_should_return_a_page_model_with_correct_values_given_a_page_with_slash_r_slash_n_line_breaks
     # Arrange
-    post_contents = %(---
+    page_contents = %(---
 layout: page\r
 title: About\r
 permalink: /about/\r
@@ -59,7 +59,7 @@ permalink: /about/\r
 ##An H2 tag)
 
     # Act
-    result = @page_factory.create_page(post_contents, 'myref')
+    result = @page_factory.create_page(page_contents, 'myref')
 
     # Assert
     assert_equal 'myref', result.github_ref

@@ -5,7 +5,7 @@ require_relative '../models/page'
 module Factories
   ##
   # This class is a factory for parsing page text and creating a correseponding page model
-  class PageFactory
+  class PageFactory < BaseFactory
     ##
     # This method parses markdown in a page a returns a page model
     #
@@ -27,7 +27,7 @@ module Factories
       # The first group represents the header of the page which appears
       # between the two --- lines. The second group is for helping capture newline characters
       # correctly and the third group is the actual page contents
-      match_obj = post_contents.match(/---(.*)---(\r\n|\r|\n)(.*)/m)
+      match_obj = page_contents.match(/---(.*)---(\r\n|\r|\n)(.*)/m)
       header = match_obj.captures[0]
       parse_page_header(header, result)
       result.contents = match_obj.captures[2]
