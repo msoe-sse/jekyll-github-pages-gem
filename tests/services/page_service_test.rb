@@ -16,7 +16,7 @@ class PageServiceTest < BaseGemTest
     page_model = create_page_model(title: 'About', permalink: '/about/', contents: 'text contents')
 
     Services::GithubService.any_instance.expects(:get_text_contents_from_file).with('about.md').returns('text contents')
-    Factories::PageFactory.any_instance.expects(:create_page).with('text contents', nil).returns(page_model)
+    Factories::PageFactory.any_instance.expects(:create_page).with('text contents', nil, nil).returns(page_model)
 
     # Act
     result = @page_service.get_markdown_page('about.md')
@@ -32,7 +32,7 @@ class PageServiceTest < BaseGemTest
 
     Services::GithubService.any_instance.expects(:get_open_pull_requests_with_body).with(pr_body).returns([])
     Services::GithubService.any_instance.expects(:get_text_contents_from_file).with('about.md').returns('text contents')
-    Factories::PageFactory.any_instance.expects(:create_page).with('text contents', nil).returns(page_model)
+    Factories::PageFactory.any_instance.expects(:create_page).with('text contents', nil, nil).returns(page_model)
 
     # Act
     result = @page_service.get_markdown_page('about.md', pr_body)
@@ -56,7 +56,7 @@ class PageServiceTest < BaseGemTest
                                                                                   create_pull_request_file_hash('ref', 'myfile.csv')
                                                                                 ])
     Services::GithubService.any_instance.expects(:get_text_contents_from_file).with('about.md').returns('text contents')
-    Factories::PageFactory.any_instance.expects(:create_page).with('text contents', nil).returns(page_model)
+    Factories::PageFactory.any_instance.expects(:create_page).with('text contents', nil, nil).returns(page_model)
 
     # Act
     result = @page_service.get_markdown_page('about.md', pr_body)
@@ -72,7 +72,7 @@ class PageServiceTest < BaseGemTest
 
     Services::GithubService.any_instance.expects(:get_open_pull_requests_with_body)
                            .with(pr_body).returns([
-                                                    create_pull_request_hash('andy-wojciechowski', pr_body, 1),
+                                                    create_pull_request_hash('andy-wojciechowski', pr_body, 1, 'http://example.com/pulls/1'),
                                                     create_pull_request_hash('andy-wojciechowski', pr_body, 2)
                                                   ])
     Services::GithubService.any_instance.expects(:get_pr_files).with(1).returns([
@@ -82,7 +82,7 @@ class PageServiceTest < BaseGemTest
                                                                                 ])
     Services::GithubService.any_instance.expects(:get_ref_from_contents_url).with('http://example.com?ref=ref').returns('ref')
     Services::GithubService.any_instance.expects(:get_text_contents_from_file).with('about.md', 'ref').returns('text contents')
-    Factories::PageFactory.any_instance.expects(:create_page).with('text contents', 'ref').returns(page_model)
+    Factories::PageFactory.any_instance.expects(:create_page).with('text contents', 'ref', 'http://example.com/pulls/1').returns(page_model)
 
     # Act
     result = @page_service.get_markdown_page('about.md', pr_body)

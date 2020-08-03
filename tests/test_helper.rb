@@ -111,13 +111,14 @@ class BaseGemTest < MiniTest::Test
     }
   end
 
-  def create_pull_request_hash(username, body, number)
+  def create_pull_request_hash(username, body, number, pull_request_url = nil)
     {
       user: {
         login: username
       },
       body: body,
-      number: number
+      number: number,
+      html_url: pull_request_url
     }
   end
 

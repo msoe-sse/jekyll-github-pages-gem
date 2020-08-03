@@ -28,13 +28,13 @@ module Services
           if markdown_file
             ref = @github_service.get_ref_from_contents_url(markdown_file[:contents_url])
             text_contents = @github_service.get_text_contents_from_file(file_path, ref)
-            return @page_factory.create_page(text_contents, ref)
+            return @page_factory.create_page(text_contents, ref, open_prs[0][:html_url])
           end
         end
       end
 
       text_contents = @github_service.get_text_contents_from_file(file_path)
-      @page_factory.create_page(text_contents, nil)
+      @page_factory.create_page(text_contents, nil, nil)
     end
 
     ##

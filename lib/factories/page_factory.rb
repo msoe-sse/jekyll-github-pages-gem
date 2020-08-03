@@ -12,8 +12,9 @@ module Factories
     # Params:
     # +page_contents+::markdown in a given page
     # +github_ref+::a sha for a ref indicating the head of a branch a page is pushed to on the GitHub server
-    def create_page(page_contents, github_ref)
-      create_page_model(page_contents, github_ref) if !page_contents.nil? && page_contents.is_a?(String)
+    # +pull_request_url+::a url to the pull request with the branch the pull request is pushed to on the GitHub server
+    def create_page(page_contents, github_ref, pull_request_url)
+      create_page_model(page_contents, github_ref, pull_request_url) if !page_contents.nil? && page_contents.is_a?(String)
     end
 
     ##
@@ -38,10 +39,11 @@ permalink: #{permalink}
 
     private
 
-    def create_page_model(page_contents, github_ref)
+    def create_page_model(page_contents, github_ref, pull_request_url)
       result = Page.new
 
       result.github_ref = github_ref
+      result.pull_request_url = pull_request_url
 
       # What this regular expression does is it matches three groups
       # The first group represents the header of the page which appears
