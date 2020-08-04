@@ -54,6 +54,7 @@ module Services
 
         new_tree_sha = create_new_tree(file_contents, page_title, file_path, sha_base_tree)
         @github_service.commit_and_push_to_repo("Edited page #{page_title}", new_tree_sha, ref, ref_name)
+        nil
       else
         branch_name = "editPage#{page_title.gsub(/\s+/, '')}"
         ref_name = "heads/#{branch_name}"

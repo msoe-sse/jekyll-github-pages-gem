@@ -128,12 +128,12 @@ class PageServiceTest < BaseGemTest
                                  'master',
                                  'Edited page About',
                                  @pr_body,
-                                 @reviewers).once
+                                 @reviewers).returns('http://example.com')
 
     # Act
-    @page_service.save_page_update('about.md', 'About', '# hello', nil, @pr_body, @reviewers)
+    result = @page_service.save_page_update('about.md', 'About', '# hello', nil, @pr_body, @reviewers)
 
-    # No Assert - taken care of with mocha mock setups
+    assert_equal 'http://example.com', result
   end
 
   private

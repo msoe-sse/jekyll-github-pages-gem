@@ -81,7 +81,7 @@ module Services
     end
 
     ##
-    # This method creates a pull request for a branch in a Jekyll website repo
+    # This method creates a pull request for a branch in a Jekyll website repo and returns the url of the newly created pull request
     #
     # Params:
     # +source_branch+::the source branch for the PR
@@ -90,8 +90,9 @@ module Services
     # +pr_body+::the body for the PR
     # +reviewers+::an array of pull request reviewers for the PR
     def create_pull_request(source_branch, base_branch, pr_title, pr_body, reviewers)
-      pull_number = @client.create_pull_request(@full_repo_name, base_branch, source_branch, pr_title, pr_body)[:number]
-      @client.request_pull_request_review(@full_repo_name, pull_number, reviewers: reviewers)
+      pull_request = @client.create_pull_request(@full_repo_name, base_branch, source_branch, pr_title, pr_body)
+      @client.request_pull_request_review(@full_repo_name, pull_request[:number], reviewers: reviewers)
+      pull_request[:html_url]
     end
 
     ##

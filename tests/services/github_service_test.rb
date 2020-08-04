@@ -92,7 +92,7 @@ class GithubServiceTest < BaseGemTest
     # No Assert - taken care of with mocha mock setups
   end
 
-  def test_create_pull_request_should_open_a_new_pull_request_for_the_jekyll_website_repo
+  def test_create_pull_request_should_open_a_new_pull_request_for_the_jekyll_website_repo_and_return_the_pull_request_url
     # Arrange
     pr_body = 'This pull request was opened automatically by the website-editor.'
     reviewers = ['reviewer']
@@ -101,17 +101,17 @@ class GithubServiceTest < BaseGemTest
                          'master',
                          'createPostTestPost',
                          'Created Post Test Post',
-                         pr_body).returns(number: 1)
+                         pr_body).returns(number: 1, html_url: 'http://example.com')
     Octokit::Client.any_instance.expects(:request_pull_request_review)
                    .with(@repo_name, 1, reviewers: reviewers).once
 
     # Act
-    @github_service.create_pull_request('createPostTestPost', 'master',
-                                        'Created Post Test Post',
-                                        pr_body,
-                                        reviewers)
+    result = @github_service.create_pull_request('createPostTestPost', 'master',
+                                                 'Created Post Test Post',
+                                                 pr_body,
+                                                 reviewers)
 
-    # No Assert - taken care of with mocha mock setups
+    assert_equal 'http://example.com', result
   end
 
   def test_create_ref_if_necessary_should_not_create_a_new_branch_if_the_branch_already_exists
