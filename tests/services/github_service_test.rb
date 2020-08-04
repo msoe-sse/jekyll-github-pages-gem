@@ -118,16 +118,16 @@ class GithubServiceTest < BaseGemTest
     # Arrange
     Octokit::Client.any_instance.expects(:ref)
                    .with(@repo_name, 'branchName')
-                   .returns('my ref')
+                   .returns('sample response')
 
     Octokit::Client.any_instance.expects(:create_ref)
                    .with(@repo_name, 'branchName', 'master head sha')
                    .returns('sample response').never
 
     # Act
-    @github_service.create_ref_if_necessary('branchName', 'master head sha')
+    result = @github_service.create_ref_if_necessary('branchName', 'master head sha')
 
-    # No Assert - taken care of with mocha mock setups
+    assert_equal 'sample response', result
   end
 
   def test_create_ref_if_necessary_should_create_a_new_branch_if_the_branch_doesnt_exist
@@ -141,9 +141,9 @@ class GithubServiceTest < BaseGemTest
                    .returns('sample response').once
 
     # Act
-    @github_service.create_ref_if_necessary('branchName', 'master head sha')
+    result = @github_service.create_ref_if_necessary('branchName', 'master head sha')
 
-    # No Assert - taken care of with mocha mock setups
+    assert_equal 'sample response', result
   end
 
   def test_get_ref_name_by_sha_should_return_the_properly_formatted_ref_name_from_octokit

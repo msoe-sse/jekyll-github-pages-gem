@@ -62,14 +62,24 @@ module Services
         master_head_sha = @github_service.get_master_head_sha
         sha_base_tree = @github_service.get_base_tree_for_branch(master_head_sha)
 
-        @github_service.create_ref_if_necessary(ref_name, master_head_sha)
+        ref_sha = @github_service.create_ref_if_necessary(ref_name, master_head_sha)[:object][:sha]
         new_tree_sha = create_new_tree(file_contents, page_title, file_path, sha_base_tree)
 
         @github_service.commit_and_push_to_repo("Edited page #{page_title}", new_tree_sha, master_head_sha, ref_name)
-        @github_service.create_pull_request(branch_name, 'master', "Edited page #{page_title}",
-                                            pr_body,
-                                            reviewers)
+        pull_request_url = @github_service.create_pull_request(branch_name, 'master', "Edited page #{page_title}",
+                                                               pr_body,
+                                                               reviewers)
+        create_save_page_update_result(ref_sha, pull_request_url)
       end
+    end
+
+    private
+
+    def create_save_page_update_result(ref_sha, pull_request_url)
+      result = Page.new
+      result.github_ref = ref_sha
+      result.pull_request_url = pull_request_url
+      result
     end
   end
 end
