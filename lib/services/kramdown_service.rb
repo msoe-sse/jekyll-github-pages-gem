@@ -41,7 +41,7 @@ end
 
 module Services
   ##
-  # This class contains operations related to the kramdown engines
+  # This class contains operations related to the kramdown engine
   class KramdownService
     DEFAULT_HERO = 'https://source.unsplash.com/collection/145103/'
     ##
