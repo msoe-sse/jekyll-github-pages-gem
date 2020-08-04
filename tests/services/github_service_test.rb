@@ -86,10 +86,10 @@ class GithubServiceTest < BaseGemTest
                    .with(@repo_name, 'heads/createPostTestPost', 'new commit sha').once
 
     # Act
-    @github_service.commit_and_push_to_repo('Created post Test Post', 'new tree sha',
-                                            'master head sha', 'heads/createPostTestPost')
+    result = @github_service.commit_and_push_to_repo('Created post Test Post', 'new tree sha',
+                                                     'master head sha', 'heads/createPostTestPost')
 
-    # No Assert - taken care of with mocha mock setups
+    assert_equal 'new commit sha', result
   end
 
   def test_create_pull_request_should_open_a_new_pull_request_for_the_jekyll_website_repo_and_return_the_pull_request_url

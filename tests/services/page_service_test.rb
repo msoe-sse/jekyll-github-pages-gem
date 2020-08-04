@@ -115,14 +115,14 @@ class PageServiceTest < BaseGemTest
     Services::GithubService.any_instance.expects(:get_base_tree_for_branch)
                            .with('master head sha').returns('master tree sha')
     Services::GithubService.any_instance.expects(:create_ref_if_necessary)
-                           .with('heads/editPageAbout', 'master head sha').returns(object: { sha: 'sha' })
+                           .with('heads/editPageAbout', 'master head sha').once
     Services::GithubService.any_instance.expects(:create_text_blob).with('# hello').returns('page blob sha')
     Services::GithubService.any_instance.expects(:create_new_tree_with_blobs)
                            .with([create_file_info_hash('about.md', 'page blob sha')], 'master tree sha')
                            .returns('new tree sha')
     Services::GithubService.any_instance.expects(:commit_and_push_to_repo)
                            .with('Edited page About', 'new tree sha',
-                                 'master head sha', 'heads/editPageAbout').once
+                                 'master head sha', 'heads/editPageAbout').returns('sha')
     Services::GithubService.any_instance.expects(:create_pull_request)
                            .with('editPageAbout',
                                  'master',

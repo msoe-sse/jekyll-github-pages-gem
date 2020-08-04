@@ -69,7 +69,7 @@ module Services
     end
 
     ##
-    # This method commits and pushes a tree to a Jekyll website repo
+    # This method commits and pushes a tree to a Jekyll website repo and returns the sha of the new commit
     #
     # Params:
     # +commit_message+::the message for the new commit
@@ -78,6 +78,7 @@ module Services
     def commit_and_push_to_repo(commit_message, tree_sha, head_sha, ref_name)
       sha_new_commit = @client.create_commit(@full_repo_name, commit_message, tree_sha, head_sha)[:sha]
       @client.update_ref(@full_repo_name, ref_name, sha_new_commit)
+      sha_new_commit
     end
 
     ##
