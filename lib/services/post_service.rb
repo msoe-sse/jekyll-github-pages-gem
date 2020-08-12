@@ -19,7 +19,7 @@ module Services
       result = []
       api_posts = @github_service.get_contents_from_path('_posts')
       api_posts.each do |api_post|
-        post_text_contents = @github_service.get_text_content_from_file(api_post.path)
+        post_text_contents = @github_service.get_text_contents_from_file(api_post.path)
         post_model = @post_factory.create_post(post_text_contents, api_post.path, nil)
         image_paths = @kramdown_service.get_all_image_paths(post_model.contents)
 

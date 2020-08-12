@@ -44,13 +44,13 @@ class PostServiceTest < BaseGemTest
                            .with('assets/img/My File2.jpg')
                            .returns(image2_content)
 
-    Services::GithubService.any_instance.expects(:get_text_content_from_file)
+    Services::GithubService.any_instance.expects(:get_text_contents_from_file)
                            .with('_posts/post1.md')
                            .returns('post 1 text content')
-    Services::GithubService.any_instance.expects(:get_text_content_from_file)
+    Services::GithubService.any_instance.expects(:get_text_contents_from_file)
                            .with('_posts/post2.md')
                            .returns('post 2 text content')
-    Services::GithubService.any_instance.expects(:get_text_content_from_file)
+    Services::GithubService.any_instance.expects(:get_text_contents_from_file)
                            .with('_posts/post3.md')
                            .returns('post 3 text content')
 
