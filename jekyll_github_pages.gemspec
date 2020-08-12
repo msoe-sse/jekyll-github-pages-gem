@@ -11,4 +11,5 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency('carrierwave', '>= 2.0.0.rc', '< 3.0')
   s.add_runtime_dependency('kramdown', '~> 2.3.0')
   s.add_runtime_dependency('octokit', '~> 4.18')
+  s.required_ruby_version = '>= 2.5.1'
 end
