@@ -17,3 +17,9 @@ There are checks that will be performed whenever Pull Requests are opened.  To s
 
 1. To run [Rubocop](https://github.com/ashmaroli/rubocop-jekyll), run the command `bundle exec rubocop`. Note the command `bundle exec rubocop -a` will attempt to automatically fix any offenses found by rubocop but some still need to be resolved manually.
 2. To run all unit tests, run the command `rake`
+
+## Releasing the Gem
+When the gem is released it's deployed to a https://rubygems.org project. The SSE webmaster controls the rubygems project and will handle releasing the gem to rubygems. The following commands below are used to release the gem if you have permissions to the rubygems project.
+
+1. `gem build jekyll_github_pages`
+2. `gem push jekyll-github-pages-gem-<VERSION>.gem`
