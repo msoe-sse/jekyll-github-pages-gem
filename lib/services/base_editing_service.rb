@@ -2,8 +2,8 @@
 
 module Services
   ##
-  # The base class for service classes responsible for performing operations on posts
-  class BasePostService
+  # The base class for service classes responsible for performing operations on the Jekyll website
+  class BaseEditingService
     def initialize(repo_name, access_token)
       @github_service = GithubService.new(repo_name, access_token)
       @kramdown_service = KramdownService.new

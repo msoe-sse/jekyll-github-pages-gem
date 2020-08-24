@@ -3,7 +3,7 @@
 source 'https://rubygems.org'
 gemspec
 
-gem 'kramdown'
+gem 'kramdown', '~> 2.3.0'
 
 gem 'octokit', '~> 4.18'
 
@@ -15,6 +15,8 @@ gem 'carrierwave', '>= 2.0.0.rc', '< 3.0'
 gem 'faraday', '~> 0.17.1'
 
 gem 'rake'
+
+gem 'rdoc'
 
 group :test do
   gem 'minitest'

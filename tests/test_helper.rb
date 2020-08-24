@@ -104,6 +104,38 @@ class BaseGemTest < MiniTest::Test
     { path: file_path, blob_sha: blob_sha }
   end
 
+  def create_pull_request_file_hash(ref, filename)
+    {
+      contents_url: "http://example.com?ref=#{ref}",
+      filename: filename
+    }
+  end
+
+  def create_pull_request_hash(username, body, number, pull_request_url = nil)
+    {
+      user: {
+        login: username
+      },
+      body: body,
+      number: number,
+      html_url: pull_request_url
+    }
+  end
+
+  def create_dummy_api_resource(parameters)
+    resource = DummyApiResource.new
+    resource.path = parameters[:path]
+    resource.content = parameters[:content]
+    resource
+  end
+
+  ##
+  # Represents a dummy API resource object from Octokit
+  class DummyApiResource
+    attr_accessor :path
+    attr_accessor :content
+  end
+
   ##
   # This method will take a carrierwave uploader and mock creating an image blob
   # for that uploader

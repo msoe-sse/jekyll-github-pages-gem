@@ -4,8 +4,6 @@ require 'octokit'
 require 'base64'
 require 'date'
 require 'cgi'
-require_relative 'kramdown_service'
-require_relative '../factories/post_factory'
 
 module Services
   ##
@@ -13,92 +11,13 @@ module Services
   class GithubService
     def initialize(full_repo_name, access_token)
       @full_repo_name = full_repo_name
-      @access_token = access_token
-
-      @kramdown_service = Services::KramdownService.new
-      @post_factory = Factories::PostFactory.new
-    end
-
-    ##
-    # This method fetches all the markdown contents of all the posts on a Jekyll website
-    # that have been written and returns a list of models representing a Post.
-    def get_all_posts
-      result = []
-      client = create_octokit_client
-      posts = client.contents(@full_repo_name, path: '_posts')
-      posts.each do |post|
-        post_api_response = client.contents(@full_repo_name, path: post.path)
-
-        post_model = create_post_from_api_response(post_api_response, nil)
-        image_paths = @kramdown_service.get_all_image_paths(post_model.contents)
-
-        images = []
-        image_paths.each do |image_path|
-          image_content = client.contents(@full_repo_name, path: image_path)
-          images << create_post_image(image_path, image_content.content)
-        end
-
-        post_model.images = images
-
-        result << post_model
-      end
-      result
-    end
-
-    ##
-    # This method fetches all of the posts that have been written but have not been merged into master yet.
-    def get_all_posts_in_pr(pr_body)
-      result = []
-      client = create_octokit_client
-      pull_requests_for_user = get_open_jekyll_pull_requests(pr_body)
-
-      pull_requests_for_user.each do |pull_request|
-        pull_request_files = client.pull_request_files(@full_repo_name, pull_request[:number])
-
-        post = nil
-        images = []
-        pull_request_files.each do |pull_request_file|
-          contents_url_params = CGI.parse(pull_request_file[:contents_url])
-
-          # The CGI.parse method returns a hash with the key being the URL and the value being an array of
-          # URI parameters so in order to get the ref we need to grab the first value in the hash and the first
-          # URI parameter in the first hash value
-          ref = contents_url_params.values.first.first
-          file_contents = client.contents(@full_repo_name, path: pull_request_file[:filename], ref: ref)
-
-          if pull_request_file[:filename].end_with?('.md')
-            post = create_post_from_api_response(file_contents, ref)
-            result << post
-          else
-            images << create_post_image(pull_request_file[:filename], file_contents.content)
-          end
-        end
-
-        post.images = images
-      end
-      result
-    end
-
-    ##
-    # This method fetches a single post from a Jekyll website given a post title
-    # and returns a Post model
-    #
-    # Params:
-    # +title+:: A title of a Jekyll website post
-    # +ref+::a sha for a ref indicating the head of a branch a post is pushed to on the GitHub server
-    def get_post_by_title(title, ref)
-      result = nil
-      result = get_all_posts_in_pr.find { |x| x.title == title } if ref
-      result = get_all_posts.find { |x| x.title == title } unless ref
-      result&.images&.each { |x| PostImageManager.instance.add_downloaded_image(x) }
-      result
+      @client = Octokit::Client.new(access_token: access_token)
     end
 
     ##
     # This method gets the sha of the commit at the head of master in a Jekyll website repo
     def get_master_head_sha
-      client = create_octokit_client
-      client.ref(@full_repo_name, 'heads/master')[:object][:sha]
+      @client.ref(@full_repo_name, 'heads/master')[:object][:sha]
     end
 
     ##
@@ -107,8 +26,7 @@ module Services
     # Params
     # +head_sha+::the sha of the head of a certain branch
     def get_base_tree_for_branch(head_sha)
-      client = create_octokit_client
-      client.commit(@full_repo_name, head_sha)[:commit][:tree][:sha]
+      @client.commit(@full_repo_name, head_sha)[:commit][:tree][:sha]
     end
 
     ##
@@ -117,8 +35,7 @@ module Services
     # Params
     # +text+::the text content to create a blob for
     def create_text_blob(text)
-      client = create_octokit_client
-      client.create_blob(@full_repo_name, text)
+      @client.create_blob(@full_repo_name, text)
     end
 
     ##
@@ -127,8 +44,7 @@ module Services
     # Params
     # +content+::the base 64 encoded content to create a blob for
     def create_base64_encoded_blob(content)
-      client = create_octokit_client
-      client.create_blob(@full_repo_name, content, 'base64')
+      @client.create_blob(@full_repo_name, content, 'base64')
     end
 
     ##
@@ -140,7 +56,6 @@ module Services
     # +file_information+::an array of hashes containing the file path and the blob sha for a file
     # +sha_base_tree+::the sha of the base tree
     def create_new_tree_with_blobs(file_information, sha_base_tree)
-      client = create_octokit_client
       blob_information = []
       file_information.each do |file|
         # This mode property on this hash represents the file mode for a GitHub tree.
@@ -150,24 +65,24 @@ module Services
                               type: 'blob',
                               sha: file[:blob_sha] }
       end
-      client.create_tree(@full_repo_name, blob_information, base_tree: sha_base_tree)[:sha]
+      @client.create_tree(@full_repo_name, blob_information, base_tree: sha_base_tree)[:sha]
     end
 
     ##
-    # This method commits and pushes a tree to a Jekyll website repo
+    # This method commits and pushes a tree to a Jekyll website repo and returns the sha of the new commit
     #
     # Params:
     # +commit_message+::the message for the new commit
     # +tree_sha+::the sha of the tree to commit
     # +head_sha+::the sha of the head to commit from
     def commit_and_push_to_repo(commit_message, tree_sha, head_sha, ref_name)
-      client = create_octokit_client
-      sha_new_commit = client.create_commit(@full_repo_name, commit_message, tree_sha, head_sha)[:sha]
-      client.update_ref(@full_repo_name, ref_name, sha_new_commit)
+      sha_new_commit = @client.create_commit(@full_repo_name, commit_message, tree_sha, head_sha)[:sha]
+      @client.update_ref(@full_repo_name, ref_name, sha_new_commit)
+      sha_new_commit
     end
 
     ##
-    # This method creates a pull request for a branch in a Jekyll website repo
+    # This method creates a pull request for a branch in a Jekyll website repo and returns the url of the newly created pull request
     #
     # Params:
     # +source_branch+::the source branch for the PR
@@ -176,9 +91,9 @@ module Services
     # +pr_body+::the body for the PR
     # +reviewers+::an array of pull request reviewers for the PR
     def create_pull_request(source_branch, base_branch, pr_title, pr_body, reviewers)
-      client = create_octokit_client
-      pull_number = client.create_pull_request(@full_repo_name, base_branch, source_branch, pr_title, pr_body)[:number]
-      client.request_pull_request_review(@full_repo_name, pull_number, reviewers: reviewers)
+      pull_request = @client.create_pull_request(@full_repo_name, base_branch, source_branch, pr_title, pr_body)
+      @client.request_pull_request_review(@full_repo_name, pull_request[:number], reviewers: reviewers)
+      pull_request[:html_url]
     end
 
     ##
@@ -189,10 +104,9 @@ module Services
     # +ref_name+:: the name of the branch to create if necessary
     # +master_head_sha+:: the sha representing the head of master
     def create_ref_if_necessary(ref_name, master_head_sha)
-      client = create_octokit_client
-      client.ref(@full_repo_name, ref_name)
+      @client.ref(@full_repo_name, ref_name)
     rescue Octokit::NotFound
-      client.create_ref(@full_repo_name, ref_name, master_head_sha)
+      @client.create_ref(@full_repo_name, ref_name, master_head_sha)
     end
 
     ##
@@ -200,38 +114,71 @@ module Services
     # It will also strip off the starting refs portion of the name
     #
     # Params:
-    # +oauth_token+::a user's oauth access token
     # +ref_sha+:: the sha of the ref to fetch
     def get_ref_name_by_sha(ref_sha)
-      client = create_octokit_client
-      ref_response = client.refs(@full_repo_name).find { |x| x[:object][:sha] == ref_sha }
+      ref_response = @client.refs(@full_repo_name).find { |x| x[:object][:sha] == ref_sha }
       ref_response[:ref].match(%r{refs/(.*)}).captures.first
     end
 
-    private
-
-    def create_post_from_api_response(post, ref)
-      # Base64.decode64 will convert our string into a ASCII string
-      # calling force_encoding('UTF-8') will fix that problem
-      text_contents = Base64.decode64(post.content).dup.force_encoding('UTF-8')
-      @post_factory.create_post(text_contents, post.path, ref)
+    ##
+    # This method will fetch and decode contents of a given file with text contents on GitHub.
+    # By default, it will fetch the file contents from the master branch unless a ref to a branch
+    # is supplied
+    #
+    # Params:
+    # +file_path+::the path to a file in a GitHub repo
+    # +ref+::an optional ref to a branch to fetch the file from
+    def get_text_contents_from_file(file_path, ref = nil)
+      api_contents = if ref
+                       @client.contents(@full_repo_name, path: file_path, ref: ref)
+                     else
+                       @client.contents(@full_repo_name, path: file_path)
+                     end
+      Base64.decode64(api_contents.content).dup.force_encoding('UTF-8')
     end
 
-    def get_open_jekyll_pull_requests(pull_request_body)
-      client = create_octokit_client
-      open_pull_requests = client.pull_requests(@full_repo_name, state: 'open')
-      open_pull_requests.select { |x| x[:body] == pull_request_body }
+    ##
+    # This method will fetch the GitHub contents for a given file on GitHub via the GitHub
+    # contents API. The full response from the API will be returned
+    #
+    # Params:
+    # +path+::the path to a file in a GitHub repo
+    def get_contents_from_path(path)
+      @client.contents(@full_repo_name, path: path)
     end
 
-    def create_post_image(filename, contents)
-      result = PostImage.new
-      result.filename = filename
-      result.contents = contents
-      result
+    ##
+    # This method will fetch all open pull requests for the current user matching a specific PR body
+    #
+    # Params:
+    # +pull_request_body+::the body of the PR to look for
+    def get_open_pull_requests_with_body(pull_request_body)
+      open_pull_requests = @client.pull_requests(@full_repo_name, state: 'open')
+      open_pull_requests.select { |x| x[:body] == pull_request_body && x[:user][:login] == @client.user[:login] }
     end
 
-    def create_octokit_client
-      Octokit::Client.new(access_token: @access_token)
+    ##
+    # This method will fetch all pull request files for a given pull request
+    #
+    # Params:
+    # +pr_number+::the pull request number for the pull request to get all files for
+    def get_pr_files(pr_number)
+      @client.pull_request_files(@full_repo_name, pr_number)
+    end
+
+    ##
+    # Parses the URL for a file's contents to determine the ref of the file
+    # The ref is used to determine what branch the file is located on
+    #
+    # Params:
+    # +contents_url+::the contents url for a file in a GitHub repo
+    def get_ref_from_contents_url(contents_url)
+      contents_url_params = CGI.parse(contents_url)
+
+      # The CGI.parse method returns a hash with the key being the URL and the value being an array of
+      # URI parameters so in order to get the ref we need to grab the first value in the hash and the first
+      # URI parameter in the first hash value
+      contents_url_params.values.first.first
     end
   end
 end
