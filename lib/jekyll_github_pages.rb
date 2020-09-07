@@ -1,6 +1,8 @@
 # frozen_string_literal: true
 
 # Third Party Dependencies
+require 'carrierwave/utilities'
+require 'carrierwave/storage'
 require 'carrierwave'
 
 # Source Files
