@@ -2,7 +2,7 @@
 
 Gem::Specification.new do |s|
   s.name = 'jekyll-github-pages-gem'
-  s.version = '1.1.0'
+  s.version = '1.1.2'
   s.summary = 'A gem that uses the github API to make edits with a jekyll blog'
   s.files = Dir['*', 'lib/**/*']
   s.require_paths = ['lib']
