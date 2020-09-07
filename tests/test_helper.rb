@@ -9,6 +9,8 @@ require 'minitest/autorun'
 require 'mocha/minitest'
 
 require File.join(File.dirname(__FILE__), '../lib/jekyll_github_pages.rb')
+require_relative '../lib/models/post_image_manager'
+require_relative '../lib/uploaders/post_image_uploader'
 
 # This class sets up helper utilities used by gem tests
 class BaseGemTest < MiniTest::Test

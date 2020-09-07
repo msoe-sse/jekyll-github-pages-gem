@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 require 'carrierwave'
+
 ##
 # The file uploader class for uploading images to a Jekyll website post
 class PostImageUploader < CarrierWave::Uploader::Base
