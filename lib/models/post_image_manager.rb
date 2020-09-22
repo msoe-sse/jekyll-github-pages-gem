@@ -2,6 +2,8 @@
 
 require 'singleton'
 
+# TODO: This will eventually go away once carrierwave is removed
+
 ##
 # A singleton class for managing all image attachments for a post
 class PostImageManager
@@ -26,10 +28,10 @@ class PostImageManager
   # Params:
   # +file+:: A ActionDispatch::Http::UploadedFile object containing the file to be used in a post
   def add_file(file)
-    uploader_to_add = PostImageUploader.new
-    uploader_to_add.cache!(file)
-    @uploaders.delete_if { |x| x.filename == file.original_filename }
-    @uploaders << uploader_to_add
+    # uploader_to_add = PostImageUploader.new
+    # uploader_to_add.cache!(file)
+    # @uploaders.delete_if { |x| x.filename == file.original_filename }
+    # @uploaders << uploader_to_add
   end
 
   ##
@@ -38,21 +40,21 @@ class PostImageManager
   # Params:
   # +downloaded_image+:: A PostImage object representing the downloaded image
   def add_downloaded_image(downloaded_image)
-    @downloaded_images << downloaded_image
+    # @downloaded_images << downloaded_image
   end
 
   ##
   # Clears the manager of all currently exisiting image uploaders and delete's their cache directories.
   # Also clears the manager of all of the downloaded images
   def clear
-    @uploaders.each do |uploader|
-      full_preview_path = "#{@root_dir}/public/uploads/tmp/#{uploader.preview.cache_name}"
-      cache_dir = File.expand_path('..', full_preview_path)
-      uploader.remove!
-      Dir.delete(cache_dir)
-    end
+    # @uploaders.each do |uploader|
+    #   full_preview_path = "#{@root_dir}/public/uploads/tmp/#{uploader.preview.cache_name}"
+    #   cache_dir = File.expand_path('..', full_preview_path)
+    #   uploader.remove!
+    #   Dir.delete(cache_dir)
+    # end
 
-    @uploaders.clear
-    @downloaded_images.clear
+    # @uploaders.clear
+    # @downloaded_images.clear
   end
 end

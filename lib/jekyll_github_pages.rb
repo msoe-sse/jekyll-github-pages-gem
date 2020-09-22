@@ -16,6 +16,6 @@ require 'services/post_service'
 
 require 'models/page'
 require 'models/post'
-# require 'models/post_image_manager'
+require 'models/post_image_manager'
 
 # require 'uploaders/post_image_uploader'
