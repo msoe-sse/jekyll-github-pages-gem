@@ -6,6 +6,13 @@ module Factories
   ##
   # The base class for all jekyll factories
   class BaseFactory
+    def create_file_path_for_item(title, collection_name)
+      formatted_collection_name = collection_name.lower
+      file_name = "#{title.gsub(/\s+/, '')}.md"
+      return "_#{collection_name}/#{file_name}" if collection_name
+      file_name
+    end
+
     protected
 
     def fix_header_syntax(text)

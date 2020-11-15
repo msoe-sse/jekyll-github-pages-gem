@@ -1,8 +1,5 @@
 # frozen_string_literal: true
 
-# Third Party Dependencies
-# require 'carrierwave'
-
 # Source Files
 require 'factories/base_factory'
 require 'factories/post_factory'
@@ -17,5 +14,3 @@ require 'services/post_service'
 require 'models/page'
 require 'models/post'
 require 'models/post_image_manager'
-
-# require 'uploaders/post_image_uploader'

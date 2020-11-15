@@ -11,6 +11,12 @@ module Factories
 
     # serves as the default hero for a post if none is provided.
     DEFAULT_HERO = 'https://source.unsplash.com/collection/145103/'
+    
+    def create_file_path_for_item(title, collection_name)
+      file_name = "#{DateTime.now.strftime('%Y-%m-%d')}-#{title.gsub(/\s+/, '')}.md"
+      return "_#{collection_name}/#{file_name}" if collection_name
+      file_name
+    end
 
     ##
     # This method parses markdown in a post a returns a post model
@@ -19,7 +25,7 @@ module Factories
     # +post_contents+::markdown in a given post
     # +file_path+::the path on GitHub to the post
     # +ref+::a sha for a ref indicating the head of a branch a post is pushed to on the GitHub server
-    def create_post(post_contents, file_path, ref)
+    def create_jekyll_item(post_contents, file_path, ref)
       create_post_model(post_contents, file_path, ref) if !post_contents.nil? && post_contents.is_a?(String)
     end
 
