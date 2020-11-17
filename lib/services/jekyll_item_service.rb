@@ -1,7 +1,12 @@
 # frozen_string_literal: true
 
+require_relative '../utilities/utilities'
+
 module Services
   class JekyllItemService
+    extend Utilities
+    IDENTIFER_LENGTH = 10
+
     def initialize(repo_name, access_token, item_factory)
       @github_service = GithubService.new(repo_name, access_token)
       @collection_name = collection_name
@@ -106,7 +111,6 @@ module Services
     # +pr_body+::an optional pull request body when updating the page on the default branch, defaults to an empty string
     # +reviewers+::an optional array of reviewers for opening a pull request when updating the page on the default branch, defaults to no reviewers
     def save_jekyll_item_update(file_path, title, file_contents, klass, ref = nil, pr_body = '', reviewers = [])
-      # TODO: Append Random string onto branch names
       if ref
         ref_name = @github_service.get_ref_name_by_sha(ref)
         sha_base_tree = @github_service.get_base_tree_for_branch(ref)
@@ -115,7 +119,7 @@ module Services
         @github_service.commit_and_push_to_repo("Edited #{klass.name} #{title}", new_tree_sha, ref, ref_name)
         nil
       else
-        branch_name = "edit#{klass.name}#{title.gsub(/\s+/, '')}"
+        branch_name = "edit#{klass.name}#{title.gsub(/\s+/, '')}#{self.generate_random_string(IDENTIFER_LENGTH)}"
         ref_name = "heads/#{branch_name}"
 
         master_head_sha = @github_service.get_master_head_sha
@@ -145,8 +149,7 @@ module Services
     # +pull_request_body+::an optional pull request body for the post, it will be blank if nothing is provided
     # +reviewers+:: an optional list of reviewers for the post PR
     def create_jekyll_item(markdown, title, klass, collection_name = nil, pull_request_body = '', reviewers = [])
-      # TODO: Append Random string onto branch names
-      branch_name = "create#{klass.name}#{title.gsub(/\s+/, '')}"
+      branch_name = "create#{klass.name}#{title.gsub(/\s+/, '')}#{self.generate_random_string(IDENTIFER_LENGTH)}"
       ref_name = "heads/#{branch_name}"
 
       master_head_sha = @github_service.get_master_head_sha
