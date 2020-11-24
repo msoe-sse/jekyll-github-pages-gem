@@ -7,7 +7,107 @@ class JekyllItemServiceTest < BaseGemTest
     @repo_name = 'msoe-sg/test-jekyll-site'
     @access_token = 'auth_token'
   end
+  
+  def test_get_all_posts_should_return_all_posts_from_the_jekyll_website
+    # Arrange
+    post1 = create_dummy_api_resource(path: '_posts/post1.md')
+    post2 = create_dummy_api_resource(path: '_posts/post2.md')
+    post3 = create_dummy_api_resource(path: '_posts/post3.md')
 
+    image1_content = create_dummy_api_resource(content: 'imagecontents1', path: 'My File1.jpg')
+    image2_content = create_dummy_api_resource(content: 'imagecontents2', path: 'My File2.jpg')
+
+    post1_markdown = "#post1\r\n![My Alt Text](/assets/img/My File1.jpg)\r\n![My Alt Text](/assets/img/My File2.jpg)"
+
+    post1_model = create_post_model(title: 'post 1', author: 'Andy Wojciechowski', hero: 'hero 1',
+                                    overlay: 'overlay 1', contents: post1_markdown, tags: %w[announcement info])
+    post2_model = create_post_model(title: 'post 2', author: 'Grace Fleming', hero: 'hero 2',
+                                    overlay: 'overlay 2', contents: '##post2', tags: ['announcement'])
+    post3_model = create_post_model(title: 'post 3', author: 'Sabrina Stangler', hero: 'hero 3',
+                                    overlay: 'overlay 3', contents: '###post3', tags: ['info'])
+
+    Services::KramdownService.any_instance.expects(:get_all_image_paths).with(post1_markdown)
+                             .returns(['assets/img/My File1.jpg', 'assets/img/My File2.jpg'])
+    Services::KramdownService.any_instance.expects(:get_all_image_paths).with('##post2').returns([])
+    Services::KramdownService.any_instance.expects(:get_all_image_paths).with('###post3').returns([])
+
+    Services::GithubService.any_instance.expects(:get_contents_from_path)
+                           .with('_posts')
+                           .returns([post1, post2, post3])
+    Services::GithubService.any_instance.expects(:get_contents_from_path)
+                           .with('assets/img/My File1.jpg')
+                           .returns(image1_content)
+    Services::GithubService.any_instance.expects(:get_contents_from_path)
+                           .with('assets/img/My File2.jpg')
+                           .returns(image2_content)
+
+    Services::GithubService.any_instance.expects(:get_text_contents_from_file)
+                           .with('_posts/post1.md')
+                           .returns('post 1 text content')
+    Services::GithubService.any_instance.expects(:get_text_contents_from_file)
+                           .with('_posts/post2.md')
+                           .returns('post 2 text content')
+    Services::GithubService.any_instance.expects(:get_text_contents_from_file)
+                           .with('_posts/post3.md')
+                           .returns('post 3 text content')
+
+    Factories::PostFactory.any_instance.expects(:create_post)
+                          .with('post 1 text content', '_posts/post1.md', nil).returns(post1_model)
+    Factories::PostFactory.any_instance.expects(:create_post)
+                          .with('post 2 text content', '_posts/post2.md', nil).returns(post2_model)
+    Factories::PostFactory.any_instance.expects(:create_post)
+                          .with('post 3 text content', '_posts/post3.md', nil).returns(post3_model)
+
+    # Act
+    result = @post_service.get_all_posts
+
+    # Assert
+    assert_equal [post1_model, post2_model, post3_model], result
+
+    assert_equal 2, post1_model.images.length
+    assert_post_image('assets/img/My File1.jpg', 'imagecontents1', post1_model.images[0])
+    assert_post_image('assets/img/My File2.jpg', 'imagecontents2', post1_model.images[1])
+
+    assert_equal 0, post3_model.images.length
+  end
+
+  def test_get_all_posts_in_pr_should_return_all_posts_in_pr
+    # Arrange
+    pr_body = 'This pull request was opened automatically by the SG website editor.'
+    post_content = create_dummy_api_resource(content: 'PR base 64 content', path: 'sample.md')
+    image_content = create_dummy_api_resource(content: 'imagecontents', path: 'sample.jpeg')
+    post_model = create_post_model(title: 'post', author: 'Andy Wojciechowski', hero: 'hero',
+                                   overlay: 'overlay', contents: '#post', tags: %w[announcement info])
+    pr_files = [
+      create_pull_request_file_hash('myref', 'sample.md'),
+      create_pull_request_file_hash('myref', 'sample.jpeg')
+    ]
+
+    Services::GithubService.any_instance.expects(:get_open_pull_requests_with_body).with(pr_body)
+                           .returns([create_pull_request_hash('andy-wojciechowski', pr_body, 3)])
+
+    Services::GithubService.any_instance.expects(:get_pr_files).with(3).returns(pr_files)
+
+    Services::GithubService.any_instance.expects(:get_ref_from_contents_url).with(pr_files[0][:contents_url]).returns('myref')
+    Services::GithubService.any_instance.expects(:get_contents_from_path).with('sample.md', 'myref').returns(post_content)
+
+    Services::GithubService.any_instance.expects(:get_ref_from_contents_url).with(pr_files[1][:contents_url]).returns('myref')
+    Services::GithubService.any_instance.expects(:get_contents_from_path).with('sample.jpeg', 'myref').returns(image_content)
+
+    Services::GithubService.any_instance.expects(:get_text_content_from_file).with('sample.md', 'myref').returns('PR content')
+    Factories::PostFactory.any_instance.expects(:create_post)
+                          .with('PR content', 'sample.md', 'myref').returns(post_model)
+
+    # Act
+    result = @post_service.get_all_posts_in_pr(pr_body)
+
+    # Assert
+    assert_equal [post_model], result
+
+    assert_equal 1, post_model.images.length
+    assert_post_image('sample.jpeg', 'imagecontents', post_model.images.first)
+  end
+  
   def test_get_jekyll_item_should_return_item_model_from_default_branch_when_not_given_pr_body
     # Arrange
     page_model = create_page_model(title: 'About', permalink: '/about/', contents: 'text contents')

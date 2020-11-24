@@ -19,7 +19,7 @@ module Factories
     # Params
     # +title+:: the title of the jekyll item
     # +collection_name+:: the name of the collection the item is in, defaults to nil
-    def create_file_path_for_item(title, collection_name)
+    def create_file_path_for_item(title, collection_name = nil)
       file_name = "#{DateTime.now.strftime('%Y-%m-%d')}-#{title.gsub(/\s+/, '')}.md"
       return "_#{collection_name.lower}/#{file_name}" if collection_name
       file_name
