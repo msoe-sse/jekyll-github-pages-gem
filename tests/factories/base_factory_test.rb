@@ -20,7 +20,7 @@ class BaseFactoryTest < BaseGemTest
     result = @base_factory.create_file_path_for_item('My Item', "ITEms")
     
     # Assert
-    assert_equal 'MyItem.md', result
+    assert_equal '_items/MyItem.md', result
   end
 
   def create_jekyll_item_should_raise_not_implemented_error_when_not_implemented_in_subclasses

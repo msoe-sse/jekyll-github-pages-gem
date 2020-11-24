@@ -10,6 +10,22 @@ class PostFactoryTest < BaseGemTest
   def setup
     @post_factory = Factories::PostFactory.new
   end
+  
+  def create_file_path_for_item_should_return_file_path_in_root_directory_when_not_given_collection_name
+    # Act
+    result = @post_factory.create_file_path_for_item('My Post')
+    
+    # Assert
+    assert_equal "#{DateTime.now.strftime('%Y-%m-%d')}-MyPost.md", result
+  end
+
+  def create_file_path_for_item_should_return_file_path_in_collection_directory_when_given_collection_name
+    # Act
+    result = @base_factory.create_file_path_for_item('My Post', "POSts")
+    
+    # Assert
+    assert_equal "_posts/#{DateTime.now.strftime('%Y-%m-%d')}-MyPost.md", result
+  end
 
   def test_create_post_should_return_nil_if_given_a_nil_value_for_post_contents
     # Act
@@ -44,11 +60,11 @@ overlay: green
 ##An H2 tag)
 
     # Act
-    result = @post_factory.create_post(post_contents, 'my post.md', 'myref')
+    result = @post_factory.create_post(post_contents, 'my post.md', 'https://example.com/pull/1')
 
     # Assert
     assert_equal 'my post.md', result.file_path
-    assert_equal 'myref', result.github_ref
+    assert_equal 'https://example.com/pull/1', result.pull_request_url
     assert_equal 'Some Post', result.title
     assert_equal 'Andrew Wojciechowski', result.author
     assert_equal 'announcement, info', result.tags
@@ -74,11 +90,11 @@ overlay: green\r
 ##An H2 tag)
 
     # Act
-    result = @post_factory.create_post(post_contents, 'my post.md', 'myref')
+    result = @post_factory.create_post(post_contents, 'my post.md', 'https://example.com/pull/1')
 
     # Assert
     assert_equal 'my post.md', result.file_path
-    assert_equal 'myref', result.github_ref
+    assert_equal 'https://example.com/pull/1', result.pull_request_url
     assert_equal "Some Post\r", result.title
     assert_equal "Andrew Wojciechowski\r", result.author
     assert_equal "announcement\r, info\r", result.tags
