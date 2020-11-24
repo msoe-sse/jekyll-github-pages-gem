@@ -12,6 +12,10 @@ module Factories
       return "_#{collection_name}/#{file_name}" if collection_name
       file_name
     end
+    
+    def create_jekyll_item(page_contents, github_ref, pull_request_url)
+      raise NotImplementedError 'create_jekyll_item is not implemented on this Factory'
+    end
 
     protected
 
