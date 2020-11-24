@@ -6,14 +6,28 @@ module Factories
   ##
   # The base class for all jekyll factories
   class BaseFactory
-    def create_file_path_for_item(title, collection_name)
-      formatted_collection_name = collection_name.lower
+    ##
+    # The default implementation of create_file_path_for_item which will format the file path for a given item.
+    # The defaul implementation will use the title for the filename
+    #
+    # Params
+    # +title+:: the title of the jekyll item
+    # +collection_name+:: the name of the collection the item is in, defaults to nil
+    def create_file_path_for_item(title, collection_name = nil)
       file_name = "#{title.gsub(/\s+/, '')}.md"
-      return "_#{collection_name}/#{file_name}" if collection_name
+      return "_#{collection_name.lower}/#{file_name}" if collection_name
       file_name
     end
     
-    def create_jekyll_item(page_contents, github_ref, pull_request_url)
+    ##
+    # The default create_jekyll_item implementation. In order for this method to be called
+    # it must be defined and implemented in subclasses
+    #
+    # Params
+    # +item_contents+::markdown in a given item
+    # +file_path+::the path on GitHub to the item
+    # +ref+::a sha for a ref indicating the head of a branch a item is pushed to on the GitHub server
+    def create_jekyll_item(item_contents, github_ref, pull_request_url)
       raise NotImplementedError 'create_jekyll_item is not implemented on this Factory'
     end
 

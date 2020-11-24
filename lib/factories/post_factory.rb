@@ -12,9 +12,16 @@ module Factories
     # serves as the default hero for a post if none is provided.
     DEFAULT_HERO = 'https://source.unsplash.com/collection/145103/'
     
+    ##
+    # A redefinition of the create_file_path_for_item method. This will make sure that
+    # the current date is added on to post file names
+    #
+    # Params
+    # +title+:: the title of the jekyll item
+    # +collection_name+:: the name of the collection the item is in, defaults to nil
     def create_file_path_for_item(title, collection_name)
       file_name = "#{DateTime.now.strftime('%Y-%m-%d')}-#{title.gsub(/\s+/, '')}.md"
-      return "_#{collection_name}/#{file_name}" if collection_name
+      return "_#{collection_name.lower}/#{file_name}" if collection_name
       file_name
     end
 
@@ -22,11 +29,11 @@ module Factories
     # This method parses markdown in a post a returns a post model
     #
     # Params:
-    # +post_contents+::markdown in a given post
+    # +item_contents+::markdown in a given post
     # +file_path+::the path on GitHub to the post
     # +ref+::a sha for a ref indicating the head of a branch a post is pushed to on the GitHub server
-    def create_jekyll_item(post_contents, file_path, ref)
-      create_post_model(post_contents, file_path, ref) if !post_contents.nil? && post_contents.is_a?(String)
+    def create_jekyll_item(item_contents, file_path, ref)
+      create_post_model(item_contents, file_path, ref) if !post_contents.nil? && post_contents.is_a?(String)
     end
 
     ##
