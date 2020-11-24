@@ -14,62 +14,59 @@ module Services
       @item_factory = item_factory
     end
     
-    # ##
-    # # This method fetches all the markdown contents of all the posts on a Jekyll website
-    # # that have been written and returns a list of models representing a Post.
-    # def get_all_posts
-    #   result = []
-    #   api_posts = @github_service.get_contents_from_path('_posts')
-    #   api_posts.each do |api_post|
-    #     post_text_contents = @github_service.get_text_contents_from_file(api_post.path)
-    #     post_model = @post_factory.create_post(post_text_contents, api_post.path, nil)
-    #     image_paths = @kramdown_service.get_all_image_paths(post_model.contents)
+    ##
+    # This method returns all items from a Jekyll collection that are on the default branch.
+    # Note if the items in PR specified items that are in PR will not be returned
+    #
+    # Params:
+    # +collection_name+:: the jekyll collection to return items for
+    # +pr_items+:: an optional list of items in the collection that are in PR
+    def get_all_jekyll_items_in_collection_from_default_branch(collection_name, pr_items = nil)
+      result = []
+      api_items = @github_service.get_contents_from_path(collection_name)
+      api_items.each do |api_item|
+        item_text_contents = @github_service.get_text_contents_from_file(api_item.path)
+        jekyll_item = @item_factory.create_jekyll_item(item_text_contents, api_item.path, nil)
+        add_to_result = !pr_files && !pr_files.find { |item| item.title == jekyll_item.title }
+        result << jekyll_item if add_to_result
+      end
+      result
+    end
+    
+    ##
+    # This method returns all items in a Jekyll collection that are currently in PR.
+    # Items that have been added or modified will be returned in one collection and items
+    # that have been deleted will be returned in a separate collection
+    #
+    # Params:
+    # +collection_name+::the jekyll collection to return items for
+    # +pr_body+:: a PR body that is used for identifying PRs that were created by this gem
+    def get_all_jekyll_items_in_collection_and_in_pr(collection_name, pr_body)
+      added_or_modified_items_in_pr = []
+      deleted_items_in_pr = []
 
-    #     images = []
-    #     image_paths.each do |image_path|
-    #       image_content = @github_service.get_contents_from_path(image_path)
-    #       images << create_post_image(image_path, image_content.content)
-    #     end
-
-    #     post_model.images = images
-
-    #     result << post_model
-    #   end
-    #   result
-    # end
-
-    # ##
-    # # This method fetches all of the posts that have been written but have not been merged into master yet
-    # #
-    # # Params
-    # # +pr_body+::the pr body for the posts in PR
-    # def get_all_posts_in_pr(pr_body)
-    #   result = []
-    #   pull_requests = @github_service.get_open_pull_requests_with_body(pr_body)
-    #   pull_requests.each do |pull_request|
-    #     pull_request_files = @github_service.get_pr_files(pull_request[:number])
-
-    #     post = nil
-    #     images = []
-    #     pull_request_files.each do |pull_request_file|
-    #       ref = @github_service.get_ref_from_contents_url(pull_request_file[:contents_url])
-    #       pr_file_contents = @github_service.get_contents_from_path(pull_request_file[:filename], ref)
-
-    #       if pull_request_file[:filename].end_with?('.md')
-    #         post_text_contents = @github_service.get_text_content_from_file(pr_file_contents.path, ref)
-    #         post = @post_factory.create_post(post_text_contents, pr_file_contents.path, ref)
-    #         result << post
-    #       else
-    #         images << create_post_image(pr_file_contents.path, pr_file_contents.content)
-    #       end
-    #     end
-
-    #     post.images = images
-    #   end
-    #   result
-    # end
-
-    def get_all_items_from_collection(collection_name = nil, pr_body = nil)
+      if collection_name && pr_body
+        pull_requests = @github_service.get_open_pull_requests_with_body(pr_body)
+        pull_requests.each do |pull_request|
+          pull_request_files = @github_service.get_pr_files(pull_request[:number])
+  
+          pull_request_files.each do |pull_request_file|
+            ref = @github_service.get_ref_from_contents_url(pull_request_file[:contents_url])
+            pr_file_contents = @github_service.get_contents_from_path(pull_request_file[:filename], ref)
+  
+            if pull_request_file[:filename].end_with?('.md') && pull_request_file[:filename].include?(collection_name)
+              item_text_contents = @github_service.get_text_content_from_file(pr_file_contents.path, ref)
+              jekyll_item = @item_factory.create_jekyll_item(item_text_contents, pr_file_contents.path, pull_request[:html_url])
+              if pull_request_file[:added] == 0 && pull_request_file[:deleted] > 0
+                deleted_items_in_pr << jekyll_item
+              else
+                added_or_modified_items_in_pr << jekyll_item
+              end
+            end
+          end
+        end
+      end
+      {added_or_modified_items_in_pr: added_or_modified_items_in_pr, deleted_items_in_pr: deleted_items_in_pr }
     end
     
     ##
@@ -166,8 +163,28 @@ module Services
                                           pull_request_body,
                                           reviewers)
     end
+    
+    ##
+    # This method will delete a given item from a jekyll website, push that deletion to a new branch,
+    # and it will open up a new pull request for the deletion.
+    #
+    # Params
+    # +file_path+:: the file path of the item to delete
+    # +title+:: the title of the item to delete
+    # +klass+:: the ruby class corresponding to the type of item that is being deleted
+    # +pull_request_body+::an optional pull request body for the post, it will be blank if nothing is provided
+    # +reviewers+:: an optional list of reviewers for the post PR
+    def delete_jekyll_item(file_path, title, klass, pull_request_body = '', reviewers = [])
+      branch_name = "delete#{klass.name}#{title.gsub(/\s+/, '')}#{self.generate_random_string(IDENTIFER_LENGTH)}"
+      ref_name = "heads/#{branch_name}"
 
-    def delete_jekyll_item
+      master_head_sha = @github_service.get_master_head_sha
+      @github_service.create_ref_if_necessary(ref_name, master_head_sha)
+
+      @github_service.delete_file(file_path, "Deleted #{klass.name} #{title}", branch_name)
+      @github_service.create_pull_request(branch_name, 'master', "Deleted #{klass.name} #{title}",
+                                          pull_request_body,
+                                          reviewers)
     end
 
     private

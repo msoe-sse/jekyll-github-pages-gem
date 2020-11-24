@@ -180,5 +180,20 @@ module Services
       # URI parameter in the first hash value
       contents_url_params.values.first.first
     end
+    
+    ##
+    # This method will delete a file from a GitHub repository on a given branch and push up the commit deleting
+    # the file to the given branch
+    #
+    # Params:
+    # +file_path+:: the file to delete on the given branch
+    # +commit_message+:: the commit message for the commit containing the deleted file
+    # +branch_name+:: the branch to delete the file on
+    def delete_file(file_path, commit_message, branch_name)
+      ref = "heads/#{branch_name}"
+      blob_sha = @client.contents(@full_repo_name, path: file_path, ref: ref)[:sha]
+      sha_new_commit = @client.delete_contents(@full_repo_name, file_path, commit_message, blob_sha, branch: branch_name)[:commit][:sha]
+      @client.update_ref(@full_repo_name, ref, sha_new_commit)
+    end
   end
 end
