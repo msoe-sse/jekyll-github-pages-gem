@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative '../models/page'
-
 module Factories
   ##
   # This class is a factory for parsing page text and creating a correseponding page model
