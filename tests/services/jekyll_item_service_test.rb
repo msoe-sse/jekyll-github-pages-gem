@@ -283,6 +283,8 @@ class JekyllItemServiceTest < BaseGemTest
 
   def test_save_jekyll_item_update_should_edit_item_and_create_a_pull_request_when_not_given_a_ref
     # Arrange
+    pr_body = 'my pr body'
+    reviewers = ['reviewer']
     Services::JekyllItemService.any_instance.expects(:generate_random_string).with(10).returns('Identifer')
     Services::GithubService.any_instance.expects(:get_master_head_sha).returns('master head sha')
     Services::GithubService.any_instance.expects(:get_base_tree_for_branch)
@@ -300,13 +302,13 @@ class JekyllItemServiceTest < BaseGemTest
                            .with('editPageAboutIdentifer',
                                  'master',
                                  'Edited Page About',
-                                 @pr_body,
-                                 @reviewers).returns('http://example.com')
+                                 pr_body,
+                                 reviewers).returns('http://example.com')
     
     jekyll_item_service = create_jekyll_item_service(Factories::PageFactory.new)
 
     # Act
-    result = jekyll_item_service.save_jekyll_item_update('about.md', 'About', '# hello', Page, nil, @pr_body, @reviewers)
+    result = jekyll_item_service.save_jekyll_item_update('about.md', 'About', '# hello', Page, nil, pr_body, reviewers)
 
     assert_equal 'http://example.com', result.pull_request_url
     assert_equal 'sha', result.github_ref
