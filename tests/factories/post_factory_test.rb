@@ -11,7 +11,7 @@ class PostFactoryTest < BaseGemTest
     @post_factory = Factories::PostFactory.new
   end
 
-  def create_file_path_for_item_should_return_file_path_in_root_directory_when_not_given_collection_name
+  def test_create_file_path_for_item_should_return_file_path_in_root_directory_when_not_given_collection_name
     # Act
     result = @post_factory.create_file_path_for_item('My Post')
 
@@ -19,9 +19,9 @@ class PostFactoryTest < BaseGemTest
     assert_equal "#{DateTime.now.strftime('%Y-%m-%d')}-MyPost.md", result
   end
 
-  def create_file_path_for_item_should_return_file_path_in_collection_directory_when_given_collection_name
+  def test_create_file_path_for_item_should_return_file_path_in_collection_directory_when_given_collection_name
     # Act
-    result = @base_factory.create_file_path_for_item('My Post', 'POSts')
+    result = @post_factory.create_file_path_for_item('My Post', '_POSts')
 
     # Assert
     assert_equal "_posts/#{DateTime.now.strftime('%Y-%m-%d')}-MyPost.md", result

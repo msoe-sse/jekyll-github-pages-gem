@@ -15,7 +15,7 @@ module Factories
     # +collection_name+:: the name of the collection the item is in, defaults to nil
     def create_file_path_for_item(title, collection_name = nil)
       file_name = "#{title.gsub(/\s+/, '')}.md"
-      return "_#{collection_name.lower}/#{file_name}" if collection_name
+      return "#{collection_name.downcase}/#{file_name}" if collection_name
 
       file_name
     end
@@ -29,7 +29,7 @@ module Factories
     # +file_path+::the path on GitHub to the item
     # +ref+::a sha for a ref indicating the head of a branch a item is pushed to on the GitHub server
     def create_jekyll_item(_item_contents, _github_ref, _pull_request_url)
-      raise NotImplementedError 'create_jekyll_item is not implemented on this Factory'
+      raise NotImplementedError
     end
 
     protected
