@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative '../models/post'
-
 module Factories
   ##
   # This class is a factory for parsing post text and creating a correseponding post model
