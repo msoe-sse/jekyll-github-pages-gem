@@ -344,7 +344,7 @@ class JekyllItemServiceTest < BaseGemTest
                                  pr_body,
                                  reviewers).returns('http://example.com')
     jekyll_item_service = create_jekyll_item_service(Factories::PageFactory.new)
-    
+
     # Act
     jekyll_item_service.create_jekyll_item('# hello', page_title, Page, '_pages', pr_body, reviewers)
 
@@ -362,9 +362,9 @@ class JekyllItemServiceTest < BaseGemTest
     Services::GithubService.any_instance.expects(:create_ref_if_necessary)
                            .with('heads/deletePageabcdefghjkabcdefghjkaIdentifer', 'master head sha').once
     Services::GithubService.any_instance.expects(:delete_file)
-                                        .with('page.md', 
-                                              'Deleted Page abcdefghjkabcdefghjka', 
-                                              'deletePageabcdefghjkabcdefghjkaIdentifer').once
+                           .with('page.md',
+                                 'Deleted Page abcdefghjkabcdefghjka',
+                                 'deletePageabcdefghjkabcdefghjkaIdentifer').once
     Services::GithubService.any_instance.expects(:create_pull_request)
                            .with('deletePageabcdefghjkabcdefghjkaIdentifer',
                                  'master',

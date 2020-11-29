@@ -27,7 +27,7 @@ class BaseFactoryTest < BaseGemTest
 
   def test_create_jekyll_item_should_raise_not_implemented_error_when_not_implemented_in_subclasses
     # Act / Assert
-    assert_raises NotImplementedError do 
+    assert_raises NotImplementedError do
       @base_factory.create_jekyll_item('contents', 'ref', 'url')
     end
   end
