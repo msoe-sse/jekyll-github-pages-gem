@@ -114,10 +114,10 @@ author: #{author}\r\n)
 
       parse_post_header(header, result)
       result.contents = match_obj.captures[2]
-                                 .remove("#{LEAD}\r\n")
-                                 .remove("#{LEAD}\n")
-                                 .remove("#{BREAK}\r\n")
-                                 .remove("#{BREAK}\n")
+                                 .gsub("#{LEAD}\r\n", '')
+                                 .gsub("#{LEAD}\n", '')
+                                 .gsub("#{BREAK}\r\n", '')
+                                 .gsub("#{BREAK}\n", '')
       result.tags = parse_tags(header)
       result
     end
