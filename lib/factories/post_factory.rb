@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require_relative '../models/post'
-
 module Factories
   ##
   # This class is a factory for parsing post text and creating a correseponding post model
@@ -13,14 +11,28 @@ module Factories
     DEFAULT_HERO = 'https://source.unsplash.com/collection/145103/'
 
     ##
+    # A redefinition of the create_file_path_for_item method. This will make sure that
+    # the current date is added on to post file names
+    #
+    # Params
+    # +title+:: the title of the jekyll item
+    # +collection_name+:: the name of the collection the item is in, defaults to nil
+    def create_file_path_for_item(title, collection_name = nil)
+      file_name = "#{DateTime.now.strftime('%Y-%m-%d')}-#{title.gsub(/\s+/, '')}.md"
+      return "#{collection_name.downcase}/#{file_name}" if collection_name
+
+      file_name
+    end
+
+    ##
     # This method parses markdown in a post a returns a post model
     #
     # Params:
-    # +post_contents+::markdown in a given post
+    # +item_contents+::markdown in a given post
     # +file_path+::the path on GitHub to the post
-    # +ref+::a sha for a ref indicating the head of a branch a post is pushed to on the GitHub server
-    def create_post(post_contents, file_path, ref)
-      create_post_model(post_contents, file_path, ref) if !post_contents.nil? && post_contents.is_a?(String)
+    # +pull_request_url+::a url to the pull request with the branch the pull request is pushed to on the GitHub server
+    def create_jekyll_item(item_contents, file_path, pull_request_url)
+      create_post_model(item_contents, file_path, pull_request_url) if !item_contents.nil? && item_contents.is_a?(String)
     end
 
     ##
@@ -88,11 +100,11 @@ author: #{author}\r\n)
       result
     end
 
-    def create_post_model(post_contents, file_path, ref)
+    def create_post_model(post_contents, file_path, pull_request_url)
       result = Post.new
 
       result.file_path = file_path
-      result.github_ref = ref
+      result.pull_request_url = pull_request_url
 
       # What this regular expression does is it matches three groups
       # The first group represents the header of the post which appears
@@ -103,10 +115,10 @@ author: #{author}\r\n)
 
       parse_post_header(header, result)
       result.contents = match_obj.captures[2]
-                                 .remove("#{LEAD}\r\n")
-                                 .remove("#{LEAD}\n")
-                                 .remove("#{BREAK}\r\n")
-                                 .remove("#{BREAK}\n")
+                                 .gsub("#{LEAD}\r\n", '')
+                                 .gsub("#{LEAD}\n", '')
+                                 .gsub("#{BREAK}\r\n", '')
+                                 .gsub("#{BREAK}\n", '')
       result.tags = parse_tags(header)
       result
     end

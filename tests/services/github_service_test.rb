@@ -277,6 +277,22 @@ class GithubServiceTest < BaseGemTest
     assert_equal ref, result
   end
 
+  def test_delete_file_should_delete_file_and_push_commit_to_github_branch
+    # Arrange
+    branch_name = 'myBranch'
+    file_path = 'MyFile.md'
+    commit_message = 'my commit message'
+
+    Octokit::Client.any_instance.expects(:contents).with(@repo_name, path: file_path, ref: 'heads/myBranch').returns({ sha: 'blobSha' })
+    Octokit::Client.any_instance.expects(:delete_contents).with(@repo_name, file_path, commit_message, 'blobSha', branch: branch_name)
+                   .returns({ commit: { sha: 'commitsha' } })
+
+    Octokit::Client.any_instance.expects(:update_ref).with(@repo_name, 'heads/myBranch', 'commitsha').once
+
+    # Act
+    @github_service.delete_file(file_path, commit_message, branch_name)
+  end
+
   private
 
   def create_blob_info_hash(file_path, blob_sha)

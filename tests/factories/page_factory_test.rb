@@ -9,23 +9,23 @@ class PageFactoryTest < BaseGemTest
     @page_factory = Factories::PageFactory.new
   end
 
-  def test_create_page_should_return_nil_if_given_a_nil_value_for_page_contents
+  def test_create_jekyll_item_should_return_nil_if_given_a_nil_value_for_page_contents
     # Act
-    result = @page_factory.create_page(nil, nil, nil)
+    result = @page_factory.create_jekyll_item(nil, nil, nil)
 
     # Assert
     assert_nil result
   end
 
-  def test_create_page_should_return_nil_if_given_a_nonstring_type_for_page_contents
+  def test_create_jekyll_item_should_return_nil_if_given_a_nonstring_type_for_page_contents
     # Act
-    result = @page_factory.create_page(1, 'myref', 'http://github.com/pulls/1')
+    result = @page_factory.create_jekyll_item(1, 'myref', 'http://github.com/pulls/1')
 
     # Assert
     assert_nil result
   end
 
-  def test_create_page_should_return_a_page_model_with_correct_values
+  def test_create_jekyll_item_should_return_a_page_model_with_correct_values
     # Arrange
     page_contents = %(---
 layout: page
@@ -36,7 +36,7 @@ permalink: /about/
 ##An H2 tag)
 
     # Act
-    result = @page_factory.create_page(page_contents, 'myref', 'http://github.com/pulls/1')
+    result = @page_factory.create_jekyll_item(page_contents, 'myref', 'http://github.com/pulls/1')
 
     # Assert
     assert_equal 'http://github.com/pulls/1', result.pull_request_url
@@ -46,7 +46,7 @@ permalink: /about/
     assert_equal "#An H1 tag\n##An H2 tag", result.contents
   end
 
-  def test_create_page_should_return_a_page_model_with_correct_values_given_a_page_with_slash_r_slash_n_line_breaks
+  def test_create_jekyll_item_should_return_a_page_model_with_correct_values_given_a_page_with_slash_r_slash_n_line_breaks
     # Arrange
     page_contents = %(---
 layout: page\r
@@ -57,7 +57,7 @@ permalink: /about/\r
 ##An H2 tag)
 
     # Act
-    result = @page_factory.create_page(page_contents, 'myref', 'http://github.com/pulls/1')
+    result = @page_factory.create_jekyll_item(page_contents, 'myref', 'http://github.com/pulls/1')
 
     # Assert
     assert_equal 'http://github.com/pulls/1', result.pull_request_url
