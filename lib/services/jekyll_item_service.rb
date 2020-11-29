@@ -46,23 +46,21 @@ module Services
       added_or_modified_items_in_pr = []
       deleted_items_in_pr = []
 
-      if collection_name && pr_body
-        pull_requests = @github_service.get_open_pull_requests_with_body(pr_body)
-        pull_requests.each do |pull_request|
-          pull_request_files = @github_service.get_pr_files(pull_request[:number])
-  
-          pull_request_files.each do |pull_request_file|
-            ref = @github_service.get_ref_from_contents_url(pull_request_file[:contents_url])
-            pr_file_contents = @github_service.get_contents_from_path(pull_request_file[:filename], ref)
-  
-            if pull_request_file[:filename].end_with?('.md') && pull_request_file[:filename].include?(collection_name)
-              item_text_contents = @github_service.get_text_content_from_file(pr_file_contents.path, ref)
-              jekyll_item = @item_factory.create_jekyll_item(item_text_contents, pr_file_contents.path, pull_request[:html_url])
-              if pull_request_file[:added] == 0 && pull_request_file[:deleted] > 0
-                deleted_items_in_pr << jekyll_item
-              else
-                added_or_modified_items_in_pr << jekyll_item
-              end
+      pull_requests = @github_service.get_open_pull_requests_with_body(pr_body)
+      pull_requests.each do |pull_request|
+        pull_request_files = @github_service.get_pr_files(pull_request[:number])
+
+        pull_request_files.each do |pull_request_file|
+          ref = @github_service.get_ref_from_contents_url(pull_request_file[:contents_url])
+          pr_file_contents = @github_service.get_contents_from_path(pull_request_file[:filename], ref)
+
+          if pull_request_file[:filename].end_with?('.md') && pull_request_file[:filename].include?(collection_name)
+            item_text_contents = @github_service.get_text_content_from_file(pr_file_contents.path, ref)
+            jekyll_item = @item_factory.create_jekyll_item(item_text_contents, pr_file_contents.path, pull_request[:html_url])
+            if pull_request_file[:added] == 0 && pull_request_file[:deleted] > 0
+              deleted_items_in_pr << jekyll_item
+            else
+              added_or_modified_items_in_pr << jekyll_item
             end
           end
         end
