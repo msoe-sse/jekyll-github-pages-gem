@@ -287,39 +287,6 @@ class JekyllItemServiceTest < BaseGemTest
     # Arrange
     pr_body = 'my pr body'
     reviewers = ['reviewer']
-    Services::JekyllItemService.any_instance.expects(:generate_random_string).with(10).returns('Identifers')
-    Services::GithubService.any_instance.expects(:get_master_head_sha).returns('master head sha')
-    Services::GithubService.any_instance.expects(:get_base_tree_for_branch)
-                           .with('master head sha').returns('master tree sha')
-    Services::GithubService.any_instance.expects(:create_ref_if_necessary)
-                           .with('heads/editPageAboutIdentifers', 'master head sha').once
-    Services::GithubService.any_instance.expects(:create_text_blob).with('# hello').returns('page blob sha')
-    Services::GithubService.any_instance.expects(:create_new_tree_with_blobs)
-                           .with([create_file_info_hash('about.md', 'page blob sha')], 'master tree sha')
-                           .returns('new tree sha')
-    Services::GithubService.any_instance.expects(:commit_and_push_to_repo)
-                           .with('Edited Page About', 'new tree sha',
-                                 'master head sha', 'heads/editPageAboutIdentifers').returns('sha')
-    Services::GithubService.any_instance.expects(:create_pull_request)
-                           .with('editPageAboutIdentifers',
-                                 'master',
-                                 'Edited Page About',
-                                 pr_body,
-                                 reviewers).returns('http://example.com')
-
-    jekyll_item_service = create_jekyll_item_service(Factories::PageFactory.new)
-
-    # Act
-    result = jekyll_item_service.save_jekyll_item_update('about.md', 'About', '# hello', Page, nil, pr_body, reviewers)
-
-    assert_equal 'http://example.com', result.pull_request_url
-    assert_equal 'sha', result.github_ref
-  end
-
-  def test_save_jekyll_item_update_should_truncate_branch_name_when_the_name_exceeds_forty_characters
-    # Arrange
-    pr_body = 'my pr body'
-    reviewers = ['reviewer']
     page_title = 'abcdefghjkabcdefghjkabc'
     Services::JekyllItemService.any_instance.expects(:generate_random_string).with(10).returns('Identifers')
     Services::GithubService.any_instance.expects(:get_master_head_sha).returns('master head sha')
@@ -348,6 +315,69 @@ class JekyllItemServiceTest < BaseGemTest
 
     assert_equal 'http://example.com', result.pull_request_url
     assert_equal 'sha', result.github_ref
+  end
+
+  def test_create_jekyll_item_should_create_item_and_push_item_to_repo
+    # Arrange
+    pr_body = 'my pr body'
+    reviewers = ['reviewer']
+    page_title = 'abcdefghjkabcdefghjka'
+
+    Services::JekyllItemService.any_instance.expects(:generate_random_string).with(10).returns('Identifers')
+    Services::GithubService.any_instance.expects(:get_master_head_sha).returns('master head sha')
+    Services::GithubService.any_instance.expects(:get_base_tree_for_branch)
+                           .with('master head sha').returns('master tree sha')
+    Services::GithubService.any_instance.expects(:create_ref_if_necessary)
+                           .with('heads/createPageabcdefghjkabcdefghjkaIdentifer', 'master head sha').once
+    Factories::PageFactory.any_instance.expects(:create_file_path_for_item).with(page_title, '_pages').returns('_pages/page.md')
+    Services::GithubService.any_instance.expects(:create_text_blob).with('# hello').returns('page blob sha')
+    Services::GithubService.any_instance.expects(:create_new_tree_with_blobs)
+                           .with([create_file_info_hash('_pages/page.md', 'page blob sha')], 'master tree sha')
+                           .returns('new tree sha')
+    Services::GithubService.any_instance.expects(:commit_and_push_to_repo)
+                           .with('Created Page abcdefghjkabcdefghjka', 'new tree sha',
+                                 'master head sha', 'heads/createPageabcdefghjkabcdefghjkaIdentifer').returns('sha')
+    Services::GithubService.any_instance.expects(:create_pull_request)
+                           .with('createPageabcdefghjkabcdefghjkaIdentifer',
+                                 'master',
+                                 'Created Page abcdefghjkabcdefghjka',
+                                 pr_body,
+                                 reviewers).returns('http://example.com')
+    jekyll_item_service = create_jekyll_item_service(Factories::PageFactory.new)
+    
+    # Act
+    jekyll_item_service.create_jekyll_item('# hello', page_title, Page, '_pages', pr_body, reviewers)
+
+    # No Assert - taken care of with mocha mock setups
+  end
+
+  def test_delete_jekyll_item_should_delete_item_and_push_item_to_repo
+    # Arrange
+    pr_body = 'my pr body'
+    reviewers = ['reviewer']
+    page_title = 'abcdefghjkabcdefghjka'
+
+    Services::JekyllItemService.any_instance.expects(:generate_random_string).with(10).returns('Identifers')
+    Services::GithubService.any_instance.expects(:get_master_head_sha).returns('master head sha')
+    Services::GithubService.any_instance.expects(:create_ref_if_necessary)
+                           .with('heads/deletePageabcdefghjkabcdefghjkaIdentifer', 'master head sha').once
+    Services::GithubService.any_instance.expects(:delete_file)
+                                        .with('page.md', 
+                                              'Deleted Page abcdefghjkabcdefghjka', 
+                                              'deletePageabcdefghjkabcdefghjkaIdentifer').once
+    Services::GithubService.any_instance.expects(:create_pull_request)
+                           .with('deletePageabcdefghjkabcdefghjkaIdentifer',
+                                 'master',
+                                 'Deleted Page abcdefghjkabcdefghjka',
+                                 pr_body,
+                                 reviewers).returns('http://example.com')
+
+    jekyll_item_service = create_jekyll_item_service(Factories::PageFactory.new)
+
+    # Act
+    jekyll_item_service.delete_jekyll_item('page.md', page_title, Page, pr_body, reviewers)
+
+    # No Assert - taken care of with mocha mock setups
   end
 
   private
