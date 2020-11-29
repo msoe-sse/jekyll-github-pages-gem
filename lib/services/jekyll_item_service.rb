@@ -10,8 +10,7 @@ module Services
 
     def initialize(repo_name, access_token, item_factory)
       @github_service = GithubService.new(repo_name, access_token)
-      @collection_name = collection_name
-      raise ArgumentError 'item_factory must be of type BaseFactory' if !(item_factory.is_a? BaseFactory)
+      raise ArgumentError 'item_factory must be of type BaseFactory' if !(item_factory.is_a? Factories::BaseFactory)
       @item_factory = item_factory
     end
     

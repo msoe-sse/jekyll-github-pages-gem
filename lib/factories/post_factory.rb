@@ -31,7 +31,7 @@ module Factories
     # +file_path+::the path on GitHub to the post
     # +pull_request_url+::a url to the pull request with the branch the pull request is pushed to on the GitHub server
     def create_jekyll_item(item_contents, file_path, pull_request_url)
-      create_post_model(item_contents, file_path, ref) if !post_contents.nil? && post_contents.is_a?(String)
+      create_post_model(item_contents, file_path, pull_request_url) if !item_contents.nil? && item_contents.is_a?(String)
     end
 
     ##

@@ -12,7 +12,7 @@ module Factories
     # +github_ref+::a sha for a ref indicating the head of a branch a page is pushed to on the GitHub server
     # +pull_request_url+::a url to the pull request with the branch the pull request is pushed to on the GitHub server
     def create_jekyll_item(item_contents, github_ref, pull_request_url)
-      create_page_model(item_contents, github_ref, pull_request_url) if !page_contents.nil? && page_contents.is_a?(String)
+      create_page_model(item_contents, github_ref, pull_request_url) if !item_contents.nil? && item_contents.is_a?(String)
     end
 
     ##

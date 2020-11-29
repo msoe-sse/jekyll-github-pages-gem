@@ -65,7 +65,7 @@ class JekyllItemServiceTest < BaseGemTest
 
     Services::GithubService.any_instance.expects(:get_contents_from_path)
                            .with('_posts')
-                           .returns([post_model)
+                           .returns([post_model])
     Services::GithubService.any_instance.expects(:get_text_contents_from_file)
                            .with('_posts/post1.md')
                            .returns('post 1 text content')
