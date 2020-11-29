@@ -101,7 +101,7 @@ class JekyllItemServiceTest < BaseGemTest
 
     Services::GithubService.any_instance.expects(:get_text_content_from_file).with('_posts/sample.md', 'myref').returns('PR content')
     Factories::PostFactory.any_instance.expects(:create_jekyll_item)
-                          .with('PR content', 'sample.md', 'https://example.com/pull/1').returns(post_model)
+                          .with('PR content', '_posts/sample.md', 'https://example.com/pull/1').returns(post_model)
     
     item_service = create_jekyll_item_service(Factories::PostFactory.new)
 
@@ -133,7 +133,7 @@ class JekyllItemServiceTest < BaseGemTest
 
     Services::GithubService.any_instance.expects(:get_text_content_from_file).with('_posts/sample.md', 'myref').returns('PR content')
     Factories::PostFactory.any_instance.expects(:create_jekyll_item)
-                          .with('PR content', 'sample.md', 'https://example.com/pull/1').returns(post_model)
+                          .with('PR content', '_posts/sample.md', 'https://example.com/pull/1').returns(post_model)
     
     item_service = create_jekyll_item_service(Factories::PostFactory.new)
 
@@ -159,7 +159,7 @@ class JekyllItemServiceTest < BaseGemTest
     Services::GithubService.any_instance.expects(:get_pr_files).with(3).returns(pr_files)
 
     Services::GithubService.any_instance.expects(:get_ref_from_contents_url).with(pr_files[0][:contents_url]).returns('myref')
-    Services::GithubService.any_instance.expects(:get_contents_from_path).with('_resources/sample.md', 'myref').returns(post_content)
+    Services::GithubService.any_instance.expects(:get_contents_from_path).with('_resources/sample.md', 'myref').returns(resource_content)
     
     item_service = create_jekyll_item_service(Factories::PostFactory.new)
 
@@ -253,7 +253,7 @@ class JekyllItemServiceTest < BaseGemTest
     jekyll_item_service = create_jekyll_item_service(Factories::PageFactory.new)
 
     # Act
-    result = jekyll_item_service.get_markdown_page('about.md', pr_body)
+    result = jekyll_item_service.get_jekyll_item('about.md', pr_body)
 
     # Assert
     assert_equal page_model, result
@@ -274,7 +274,7 @@ class JekyllItemServiceTest < BaseGemTest
     jekyll_item_service = create_jekyll_item_service(Factories::PageFactory.new)
 
     # Act
-    jekyll_item_service.save_page_update('about.md', 'about', '# hello', 'my ref')
+    jekyll_item_service.save_jekyll_item_update('about.md', 'about', '# hello', 'my ref', Page.class)
 
     # No Assert - taken care of with mocha mock setups
   end
@@ -304,7 +304,7 @@ class JekyllItemServiceTest < BaseGemTest
     jekyll_item_service = create_jekyll_item_service(Factories::PageFactory.new)
 
     # Act
-    result = jekyll_item_service.save_page_update('about.md', 'About', '# hello', nil, @pr_body, @reviewers)
+    result = jekyll_item_service.save_jekyll_item_update('about.md', 'About', '# hello', Page.class, @pr_body, @reviewers)
 
     assert_equal 'http://example.com', result.pull_request_url
     assert_equal 'sha', result.github_ref

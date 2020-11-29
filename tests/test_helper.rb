@@ -42,6 +42,7 @@ class BaseGemTest < MiniTest::Test
       result[:added] = 1
       result[:deleted] = 0
     end
+    result
   end
 
   def create_pull_request_hash(username, body, number, pull_request_url = nil)

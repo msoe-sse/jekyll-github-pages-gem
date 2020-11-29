@@ -4,7 +4,7 @@ require_relative '../utilities/utilities'
 
 module Services
   class JekyllItemService
-    extend Utilities
+    include Utilities
     IDENTIFER_LENGTH = 10
     MAX_BRANCH_LENGTH = 40
 
@@ -27,7 +27,7 @@ module Services
       api_items.each do |api_item|
         item_text_contents = @github_service.get_text_contents_from_file(api_item.path)
         jekyll_item = @item_factory.create_jekyll_item(item_text_contents, api_item.path, nil)
-        add_to_result = !pr_files && !pr_files.find { |item| item.title == jekyll_item.title }
+        add_to_result = !pr_items || !pr_items.find { |item| item.title == jekyll_item.title }
         result << jekyll_item if add_to_result
       end
       result
@@ -114,7 +114,7 @@ module Services
         @github_service.commit_and_push_to_repo("Edited #{klass.name} #{title}", new_tree_sha, ref, ref_name)
         nil
       else
-        branch_name = "edit#{klass.name}#{title.gsub(/\s+/, '')}#{self.generate_random_string(IDENTIFER_LENGTH)}".slice(0, MAX_BRANCH_LENGTH)
+        branch_name = "edit#{klass.name}#{title.gsub(/\s+/, '')}#{generate_random_string(IDENTIFER_LENGTH)}".slice(0, MAX_BRANCH_LENGTH)
         ref_name = "heads/#{branch_name}"
 
         master_head_sha = @github_service.get_master_head_sha
