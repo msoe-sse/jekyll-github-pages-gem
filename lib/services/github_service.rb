@@ -180,7 +180,7 @@ module Services
       # URI parameter in the first hash value
       contents_url_params.values.first.first
     end
-    
+
     ##
     # This method will delete a file from a GitHub repository on a given branch and push up the commit deleting
     # the file to the given branch

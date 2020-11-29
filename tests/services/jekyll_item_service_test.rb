@@ -2,16 +2,18 @@
 
 require_relative '../test_helper'
 
+##
+# Test class for the JekyllItemService class
 class JekyllItemServiceTest < BaseGemTest
   def setup
     @repo_name = 'msoe-sg/test-jekyll-site'
     @access_token = 'auth_token'
   end
-  
+
   def test_initialize_should_raise_argument_error_when_factory_does_not_inherit_from_base_factory
     # Act / Assert
-    assert_raises ArgumentError do 
-      Services::JekyllItemService.new(@repo_name, @access_token, 1) 
+    assert_raises ArgumentError do
+      Services::JekyllItemService.new(@repo_name, @access_token, 1)
     end
   end
 
@@ -48,7 +50,7 @@ class JekyllItemServiceTest < BaseGemTest
                           .with('post 2 text content', '_posts/post2.md', nil).returns(post2_model)
     Factories::PostFactory.any_instance.expects(:create_jekyll_item)
                           .with('post 3 text content', '_posts/post3.md', nil).returns(post3_model)
-    
+
     item_service = create_jekyll_item_service(Factories::PostFactory.new)
 
     # Act
@@ -57,13 +59,13 @@ class JekyllItemServiceTest < BaseGemTest
     # Assert
     assert_equal [post1_model, post2_model, post3_model], result
   end
-  
+
   def test_get_all_jekyll_items_in_collection_from_default_branch_should_not_return_items_in_pr_when_specified
     # Arrange
     post = create_dummy_api_resource(path: '_posts/post1.md')
 
     post_model = create_post_model(title: 'post 1', author: 'Andy Wojciechowski', hero: 'hero 1',
-                                    overlay: 'overlay 1', contents: '##post1', tags: %w[announcement info])
+                                   overlay: 'overlay 1', contents: '##post1', tags: %w[announcement info])
 
     Services::GithubService.any_instance.expects(:get_contents_from_path)
                            .with('_posts')
@@ -73,12 +75,12 @@ class JekyllItemServiceTest < BaseGemTest
                            .returns('post 1 text content')
     Factories::PostFactory.any_instance.expects(:create_jekyll_item)
                           .with('post 1 text content', '_posts/post1.md', nil).returns(post_model)
-    
+
     item_service = create_jekyll_item_service(Factories::PostFactory.new)
 
     # Act
     result = item_service.get_all_jekyll_items_in_collection_from_default_branch('_posts', [post_model])
-    
+
     # Assert
     assert result.empty?
   end
@@ -104,7 +106,7 @@ class JekyllItemServiceTest < BaseGemTest
     Services::GithubService.any_instance.expects(:get_text_content_from_file).with('_posts/sample.md', 'myref').returns('PR content')
     Factories::PostFactory.any_instance.expects(:create_jekyll_item)
                           .with('PR content', '_posts/sample.md', 'https://example.com/pull/1').returns(post_model)
-    
+
     item_service = create_jekyll_item_service(Factories::PostFactory.new)
 
     # Act
@@ -136,7 +138,7 @@ class JekyllItemServiceTest < BaseGemTest
     Services::GithubService.any_instance.expects(:get_text_content_from_file).with('_posts/sample.md', 'myref').returns('PR content')
     Factories::PostFactory.any_instance.expects(:create_jekyll_item)
                           .with('PR content', '_posts/sample.md', 'https://example.com/pull/1').returns(post_model)
-    
+
     item_service = create_jekyll_item_service(Factories::PostFactory.new)
 
     # Act
@@ -162,7 +164,7 @@ class JekyllItemServiceTest < BaseGemTest
 
     Services::GithubService.any_instance.expects(:get_ref_from_contents_url).with(pr_files[0][:contents_url]).returns('myref')
     Services::GithubService.any_instance.expects(:get_contents_from_path).with('_resources/sample.md', 'myref').returns(resource_content)
-    
+
     item_service = create_jekyll_item_service(Factories::PostFactory.new)
 
     # Act
@@ -172,14 +174,14 @@ class JekyllItemServiceTest < BaseGemTest
     assert result[:added_or_modified_items_in_pr].empty?
     assert result[:deleted_items_in_pr].empty?
   end
-  
+
   def test_get_jekyll_item_should_return_item_model_from_default_branch_when_not_given_pr_body
     # Arrange
     page_model = create_page_model(title: 'About', permalink: '/about/', contents: 'text contents')
 
     Services::GithubService.any_instance.expects(:get_text_contents_from_file).with('about.md').returns('text contents')
     Factories::PageFactory.any_instance.expects(:create_jekyll_item).with('text contents', nil, nil).returns(page_model)
-    
+
     jekyll_item_service = create_jekyll_item_service(Factories::PageFactory.new)
 
     # Act
@@ -197,7 +199,7 @@ class JekyllItemServiceTest < BaseGemTest
     Services::GithubService.any_instance.expects(:get_open_pull_requests_with_body).with(pr_body).returns([])
     Services::GithubService.any_instance.expects(:get_text_contents_from_file).with('about.md').returns('text contents')
     Factories::PageFactory.any_instance.expects(:create_jekyll_item).with('text contents', nil, nil).returns(page_model)
-    
+
     jekyll_item_service = create_jekyll_item_service(Factories::PageFactory.new)
 
     # Act
@@ -223,7 +225,7 @@ class JekyllItemServiceTest < BaseGemTest
                                                                                 ])
     Services::GithubService.any_instance.expects(:get_text_contents_from_file).with('about.md').returns('text contents')
     Factories::PageFactory.any_instance.expects(:create_jekyll_item).with('text contents', nil, nil).returns(page_model)
-    
+
     jekyll_item_service = create_jekyll_item_service(Factories::PageFactory.new)
 
     # Act
@@ -251,7 +253,7 @@ class JekyllItemServiceTest < BaseGemTest
     Services::GithubService.any_instance.expects(:get_ref_from_contents_url).with('http://example.com?ref=ref').returns('ref')
     Services::GithubService.any_instance.expects(:get_text_contents_from_file).with('about.md', 'ref').returns('text contents')
     Factories::PageFactory.any_instance.expects(:create_jekyll_item).with('text contents', 'ref', 'http://example.com/pulls/1').returns(page_model)
-    
+
     jekyll_item_service = create_jekyll_item_service(Factories::PageFactory.new)
 
     # Act
@@ -272,7 +274,7 @@ class JekyllItemServiceTest < BaseGemTest
     Services::GithubService.any_instance.expects(:commit_and_push_to_repo)
                            .with('Edited Page about', 'new tree sha',
                                  'my ref', 'heads/editPageAbout').once
-    
+
     jekyll_item_service = create_jekyll_item_service(Factories::PageFactory.new)
 
     # Act
@@ -304,7 +306,7 @@ class JekyllItemServiceTest < BaseGemTest
                                  'Edited Page About',
                                  pr_body,
                                  reviewers).returns('http://example.com')
-    
+
     jekyll_item_service = create_jekyll_item_service(Factories::PageFactory.new)
 
     # Act
@@ -319,7 +321,7 @@ class JekyllItemServiceTest < BaseGemTest
   def create_jekyll_item_service(factory)
     Services::JekyllItemService.new(@repo_name, @access_token, factory)
   end
-  
+
   def create_post_model(parameters)
     post_model = Post.new
     post_model.title = parameters[:title]

@@ -2,6 +2,8 @@
 
 require_relative '../test_helper'
 
+##
+# Test class for the Utilities module
 class UtilitiesTest < BaseGemTest
   include Utilities
 

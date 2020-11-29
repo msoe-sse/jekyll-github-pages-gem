@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ##
 # An internal module containing different utility methods used in the gem
 module Utilities

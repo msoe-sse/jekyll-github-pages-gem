@@ -9,7 +9,7 @@ module Factories
 
     # serves as the default hero for a post if none is provided.
     DEFAULT_HERO = 'https://source.unsplash.com/collection/145103/'
-    
+
     ##
     # A redefinition of the create_file_path_for_item method. This will make sure that
     # the current date is added on to post file names
@@ -20,6 +20,7 @@ module Factories
     def create_file_path_for_item(title, collection_name = nil)
       file_name = "#{DateTime.now.strftime('%Y-%m-%d')}-#{title.gsub(/\s+/, '')}.md"
       return "_#{collection_name.lower}/#{file_name}" if collection_name
+
       file_name
     end
 

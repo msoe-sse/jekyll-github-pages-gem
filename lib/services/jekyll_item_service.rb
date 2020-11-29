@@ -3,6 +3,8 @@
 require_relative '../utilities/utilities'
 
 module Services
+  ##
+  # Service class for editing items on a Jekyll website hosted with GitHub Pages
   class JekyllItemService
     include Utilities
     IDENTIFER_LENGTH = 10
@@ -10,10 +12,11 @@ module Services
 
     def initialize(repo_name, access_token, item_factory)
       @github_service = GithubService.new(repo_name, access_token)
-      raise ArgumentError if !(item_factory.is_a? Factories::BaseFactory)
+      raise ArgumentError unless item_factory.is_a? Factories::BaseFactory
+
       @item_factory = item_factory
     end
-    
+
     ##
     # This method returns all items from a Jekyll collection that are on the default branch.
     # Note if the items in PR specified items that are in PR will not be returned
@@ -32,7 +35,7 @@ module Services
       end
       result
     end
-    
+
     ##
     # This method returns all items in a Jekyll collection that are currently in PR.
     # Items that have been added or modified will be returned in one collection and items
@@ -53,20 +56,20 @@ module Services
           ref = @github_service.get_ref_from_contents_url(pull_request_file[:contents_url])
           pr_file_contents = @github_service.get_contents_from_path(pull_request_file[:filename], ref)
 
-          if pull_request_file[:filename].end_with?('.md') && pull_request_file[:filename].include?(collection_name)
-            item_text_contents = @github_service.get_text_content_from_file(pr_file_contents.path, ref)
-            jekyll_item = @item_factory.create_jekyll_item(item_text_contents, pr_file_contents.path, pull_request[:html_url])
-            if pull_request_file[:added] == 0 && pull_request_file[:deleted] > 0
-              deleted_items_in_pr << jekyll_item
-            else
-              added_or_modified_items_in_pr << jekyll_item
-            end
+          next unless pull_request_file[:filename].end_with?('.md') && pull_request_file[:filename].include?(collection_name)
+
+          item_text_contents = @github_service.get_text_content_from_file(pr_file_contents.path, ref)
+          jekyll_item = @item_factory.create_jekyll_item(item_text_contents, pr_file_contents.path, pull_request[:html_url])
+          if pull_request_file[:added].zero? && pull_request_file[:deleted].positive?
+            deleted_items_in_pr << jekyll_item
+          else
+            added_or_modified_items_in_pr << jekyll_item
           end
         end
       end
-      {added_or_modified_items_in_pr: added_or_modified_items_in_pr, deleted_items_in_pr: deleted_items_in_pr }
+      { added_or_modified_items_in_pr: added_or_modified_items_in_pr, deleted_items_in_pr: deleted_items_in_pr }
     end
-    
+
     ##
     # Returns a given item from a Jekyll website from the default branch unless a pull request body
     # is specified. In that case then it will return the item from the source branch of the first open
@@ -92,7 +95,7 @@ module Services
       text_contents = @github_service.get_text_contents_from_file(file_path)
       @item_factory.create_jekyll_item(text_contents, nil, nil)
     end
-    
+
     ##
     # Saves a given jekyll item update by updating the item contents and creating a pull request into master
     # if a ref is not given. Otherwise if a ref is supplied it will update the branch matching the given ref without creating a pull request.
@@ -130,10 +133,10 @@ module Services
         create_save_item_update_result(ref_sha, pull_request_url, klass)
       end
     end
-    
+
     ##
     # This method submits a new item to GitHub by checking out a new branch for the item,
-    # if the branch already doesn't exist. Commiting and pushing the markdown to the branch. 
+    # if the branch already doesn't exist. Commiting and pushing the markdown to the branch.
     # And then finally opening a pull request into master for the new item.
     #
     # Params
@@ -144,7 +147,7 @@ module Services
     # +pull_request_body+::an optional pull request body for the post, it will be blank if nothing is provided
     # +reviewers+:: an optional list of reviewers for the post PR
     def create_jekyll_item(markdown, title, klass, collection_name = nil, pull_request_body = '', reviewers = [])
-      branch_name = "create#{klass.name}#{title.gsub(/\s+/, '')}#{self.generate_random_string(IDENTIFER_LENGTH)}".slice(0, MAX_BRANCH_LENGTH)
+      branch_name = "create#{klass.name}#{title.gsub(/\s+/, '')}#{generate_random_string(IDENTIFER_LENGTH)}".slice(0, MAX_BRANCH_LENGTH)
       ref_name = "heads/#{branch_name}"
 
       master_head_sha = @github_service.get_master_head_sha
@@ -161,7 +164,7 @@ module Services
                                           pull_request_body,
                                           reviewers)
     end
-    
+
     ##
     # This method will delete a given item from a jekyll website, push that deletion to a new branch,
     # and it will open up a new pull request for the deletion.
@@ -173,7 +176,7 @@ module Services
     # +pull_request_body+::an optional pull request body for the post, it will be blank if nothing is provided
     # +reviewers+:: an optional list of reviewers for the post PR
     def delete_jekyll_item(file_path, title, klass, pull_request_body = '', reviewers = [])
-      branch_name = "delete#{klass.name}#{title.gsub(/\s+/, '')}#{self.generate_random_string(IDENTIFER_LENGTH)}".slice(0, MAX_BRANCH_LENGTH)
+      branch_name = "delete#{klass.name}#{title.gsub(/\s+/, '')}#{generate_random_string(IDENTIFER_LENGTH)}".slice(0, MAX_BRANCH_LENGTH)
       ref_name = "heads/#{branch_name}"
 
       master_head_sha = @github_service.get_master_head_sha
