@@ -10,7 +10,9 @@ class JekyllItemServiceTest < BaseGemTest
   
   def test_initialize_should_raise_argument_error_when_factory_does_not_inherit_from_base_factory
     # Act / Assert
-    -> { Services::JekyllItemService.new(@repo_name, @access_token, 1) }.must_raise ArgumentError
+    assert_raises ArgumentError do 
+      Services::JekyllItemService.new(@repo_name, @access_token, 1) 
+    end
   end
 
   def test_get_all_jekyll_items_in_collection_from_default_branch_should_return_all_jekyll_items_from_the_default_branch
@@ -65,7 +67,7 @@ class JekyllItemServiceTest < BaseGemTest
 
     Services::GithubService.any_instance.expects(:get_contents_from_path)
                            .with('_posts')
-                           .returns([post_model])
+                           .returns([post])
     Services::GithubService.any_instance.expects(:get_text_contents_from_file)
                            .with('_posts/post1.md')
                            .returns('post 1 text content')
@@ -268,20 +270,20 @@ class JekyllItemServiceTest < BaseGemTest
                            .with([create_file_info_hash('about.md', 'page blob sha')], 'master tree sha')
                            .returns('new tree sha')
     Services::GithubService.any_instance.expects(:commit_and_push_to_repo)
-                           .with('Edited page about', 'new tree sha',
+                           .with('Edited Page about', 'new tree sha',
                                  'my ref', 'heads/editPageAbout').once
     
     jekyll_item_service = create_jekyll_item_service(Factories::PageFactory.new)
 
     # Act
-    jekyll_item_service.save_jekyll_item_update('about.md', 'about', '# hello', 'my ref', Page.class)
+    jekyll_item_service.save_jekyll_item_update('about.md', 'about', '# hello', Page, 'my ref')
 
     # No Assert - taken care of with mocha mock setups
   end
 
   def test_save_jekyll_item_update_should_edit_item_and_create_a_pull_request_when_not_given_a_ref
     # Arrange
-    Utilities.expects(:generate_random_string).with(10).returns('Identifer')
+    Services::JekyllItemService.any_instance.expects(:generate_random_string).with(10).returns('Identifer')
     Services::GithubService.any_instance.expects(:get_master_head_sha).returns('master head sha')
     Services::GithubService.any_instance.expects(:get_base_tree_for_branch)
                            .with('master head sha').returns('master tree sha')
@@ -292,19 +294,19 @@ class JekyllItemServiceTest < BaseGemTest
                            .with([create_file_info_hash('about.md', 'page blob sha')], 'master tree sha')
                            .returns('new tree sha')
     Services::GithubService.any_instance.expects(:commit_and_push_to_repo)
-                           .with('Edited page About', 'new tree sha',
+                           .with('Edited Page About', 'new tree sha',
                                  'master head sha', 'heads/editPageAboutIdentifer').returns('sha')
     Services::GithubService.any_instance.expects(:create_pull_request)
                            .with('editPageAboutIdentifer',
                                  'master',
-                                 'Edited page About',
+                                 'Edited Page About',
                                  @pr_body,
                                  @reviewers).returns('http://example.com')
     
     jekyll_item_service = create_jekyll_item_service(Factories::PageFactory.new)
 
     # Act
-    result = jekyll_item_service.save_jekyll_item_update('about.md', 'About', '# hello', Page.class, @pr_body, @reviewers)
+    result = jekyll_item_service.save_jekyll_item_update('about.md', 'About', '# hello', Page, nil, @pr_body, @reviewers)
 
     assert_equal 'http://example.com', result.pull_request_url
     assert_equal 'sha', result.github_ref

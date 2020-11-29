@@ -10,7 +10,7 @@ module Services
 
     def initialize(repo_name, access_token, item_factory)
       @github_service = GithubService.new(repo_name, access_token)
-      raise ArgumentError 'item_factory must be of type BaseFactory' if !(item_factory.is_a? Factories::BaseFactory)
+      raise ArgumentError if !(item_factory.is_a? Factories::BaseFactory)
       @item_factory = item_factory
     end
     
@@ -110,7 +110,7 @@ module Services
         ref_name = @github_service.get_ref_name_by_sha(ref)
         sha_base_tree = @github_service.get_base_tree_for_branch(ref)
 
-        new_tree_sha = create_new_tree(file_contents, title, file_path, sha_base_tree)
+        new_tree_sha = create_new_tree(file_contents, file_path, sha_base_tree)
         @github_service.commit_and_push_to_repo("Edited #{klass.name} #{title}", new_tree_sha, ref, ref_name)
         nil
       else
@@ -121,13 +121,13 @@ module Services
         sha_base_tree = @github_service.get_base_tree_for_branch(master_head_sha)
 
         @github_service.create_ref_if_necessary(ref_name, master_head_sha)
-        new_tree_sha = create_new_tree(file_contents, title, file_path, sha_base_tree)
+        new_tree_sha = create_new_tree(file_contents, file_path, sha_base_tree)
 
         ref_sha = @github_service.commit_and_push_to_repo("Edited #{klass.name} #{title}", new_tree_sha, master_head_sha, ref_name)
         pull_request_url = @github_service.create_pull_request(branch_name, 'master', "Edited #{klass.name} #{title}",
                                                                pr_body,
                                                                reviewers)
-        create_save_page_update_result(ref_sha, pull_request_url, klass)
+        create_save_item_update_result(ref_sha, pull_request_url, klass)
       end
     end
     
@@ -153,7 +153,7 @@ module Services
       @github_service.create_ref_if_necessary(ref_name, master_head_sha)
 
       new_item_path = @item_factory.create_file_path_for_item(title, collection_name)
-      new_tree_sha = create_new_tree(markdown, title, new_item_path, sha_base_tree)
+      new_tree_sha = create_new_tree(markdown, new_item_path, sha_base_tree)
 
       @github_service.commit_and_push_to_repo("Created #{klass.name} #{title}",
                                               new_tree_sha, master_head_sha, ref_name)
