@@ -22,7 +22,7 @@ module Services
     #
     # Params:
     # +text+:: markdown to convert to html
-    def get_markdown_item_preview(text)
+    def self.get_markdown_item_preview(text)
       Kramdown::Document.new(text).to_html
     end
 

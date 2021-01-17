@@ -20,10 +20,9 @@ class JekyllItemServiceTest < BaseGemTest
   def test_get_markdown_item_preview_should_convert_markdown_to_html
     # Arrange
     markdown = %(#Andy is cool Andy is nice)
-    item_service = create_jekyll_item_service(Factories::PostFactory.new)
 
     # Act
-    result = item_service.get_markdown_item_preview(markdown)
+    result = Services::JekyllItemService.get_markdown_item_preview(markdown)
 
     # Assert
     assert !result.nil?
