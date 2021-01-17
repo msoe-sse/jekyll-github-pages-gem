@@ -17,6 +17,18 @@ class JekyllItemServiceTest < BaseGemTest
     end
   end
 
+  def test_get_markdown_item_preview_should_convert_markdown_to_html
+    # Arrange
+    markdown = %(#Andy is cool Andy is nice)
+    item_service = create_jekyll_item_service(Factories::PostFactory.new)
+
+    # Act
+    result = item_service.get_markdown_item_preview(markdown)
+
+    # Assert
+    assert !result.nil?
+  end
+
   def test_get_all_jekyll_items_in_collection_from_default_branch_should_return_all_jekyll_items_from_the_default_branch
     # Arrange
     post1 = create_dummy_api_resource(path: '_posts/post1.md')

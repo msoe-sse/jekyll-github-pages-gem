@@ -18,6 +18,15 @@ module Services
     end
 
     ##
+    # This method takes given markdown and converts it to HTML for the item preview
+    #
+    # Params:
+    # +text+:: markdown to convert to html
+    def get_markdown_item_preview(text)
+      Kramdown::Document.new(text).to_html
+    end
+
+    ##
     # This method returns all items from a Jekyll collection that are on the default branch.
     # Note if the items in PR specified items that are in PR will not be returned
     #
