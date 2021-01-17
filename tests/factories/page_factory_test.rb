@@ -11,7 +11,7 @@ class PageFactoryTest < BaseGemTest
 
   def test_create_jekyll_item_should_return_nil_if_given_a_nil_value_for_page_contents
     # Act
-    result = @page_factory.create_jekyll_item(nil, nil, nil)
+    result = @page_factory.create_jekyll_item(nil, nil, nil, nil)
 
     # Assert
     assert_nil result
@@ -19,7 +19,7 @@ class PageFactoryTest < BaseGemTest
 
   def test_create_jekyll_item_should_return_nil_if_given_a_nonstring_type_for_page_contents
     # Act
-    result = @page_factory.create_jekyll_item(1, 'myref', 'http://github.com/pulls/1')
+    result = @page_factory.create_jekyll_item(1, 'about.md', 'myref', 'http://github.com/pulls/1')
 
     # Assert
     assert_nil result
@@ -36,10 +36,11 @@ permalink: /about/
 ##An H2 tag)
 
     # Act
-    result = @page_factory.create_jekyll_item(page_contents, 'myref', 'http://github.com/pulls/1')
+    result = @page_factory.create_jekyll_item(page_contents, 'about.md', 'myref', 'http://github.com/pulls/1')
 
     # Assert
     assert_equal 'http://github.com/pulls/1', result.pull_request_url
+    assert_equal 'about.md', result.file_path
     assert_equal 'myref', result.github_ref
     assert_equal 'About', result.title
     assert_equal '/about/', result.permalink
@@ -57,10 +58,11 @@ permalink: /about/\r
 ##An H2 tag)
 
     # Act
-    result = @page_factory.create_jekyll_item(page_contents, 'myref', 'http://github.com/pulls/1')
+    result = @page_factory.create_jekyll_item(page_contents, 'about.md', 'myref', 'http://github.com/pulls/1')
 
     # Assert
     assert_equal 'http://github.com/pulls/1', result.pull_request_url
+    assert_equal 'about.md', result.file_path
     assert_equal 'myref', result.github_ref
     assert_equal "About\r", result.title
     assert_equal "/about/\r", result.permalink

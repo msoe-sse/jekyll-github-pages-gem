@@ -27,8 +27,8 @@ module Factories
     # Params
     # +item_contents+::markdown in a given item
     # +file_path+::the path on GitHub to the item
-    # +ref+::a sha for a ref indicating the head of a branch a item is pushed to on the GitHub server
-    def create_jekyll_item(_item_contents, _github_ref, _pull_request_url)
+    # +github_ref+::a sha for a ref indicating the head of a branch a item is pushed to on the GitHub server
+    def create_jekyll_item(_item_contents, _file_path, _github_ref, _pull_request_url)
       raise NotImplementedError
     end
 

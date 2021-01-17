@@ -38,7 +38,7 @@ module Services
       api_items = @github_service.get_contents_from_path(collection_name)
       api_items.each do |api_item|
         item_text_contents = @github_service.get_text_contents_from_file(api_item.path)
-        jekyll_item = @item_factory.create_jekyll_item(item_text_contents, api_item.path, nil)
+        jekyll_item = @item_factory.create_jekyll_item(item_text_contents, api_item.path, nil, nil)
         add_to_result = !pr_items || !pr_items.find { |item| item.title == jekyll_item.title }
         result << jekyll_item if add_to_result
       end
@@ -68,7 +68,7 @@ module Services
           next unless pull_request_file[:filename].end_with?('.md') && pull_request_file[:filename].include?(collection_name)
 
           item_text_contents = @github_service.get_text_content_from_file(pr_file_contents.path, ref)
-          jekyll_item = @item_factory.create_jekyll_item(item_text_contents, pr_file_contents.path, pull_request[:html_url])
+          jekyll_item = @item_factory.create_jekyll_item(item_text_contents, pr_file_contents.path, ref, pull_request[:html_url])
           if pull_request_file[:added].zero? && pull_request_file[:deleted].positive?
             deleted_items_in_pr << jekyll_item
           else
@@ -96,7 +96,7 @@ module Services
           if markdown_file
             ref = @github_service.get_ref_from_contents_url(markdown_file[:contents_url])
             text_contents = @github_service.get_text_contents_from_file(file_path, ref)
-            return @item_factory.create_jekyll_item(text_contents, ref, open_prs[0][:html_url])
+            return @item_factory.create_jekyll_item(text_contents, file_path, ref, open_prs[0][:html_url])
           end
         end
       end

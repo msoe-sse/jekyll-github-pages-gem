@@ -9,4 +9,6 @@ class JekyllItem
   attr_accessor :github_ref
   attr_accessor :pull_request_url
   attr_accessor :contents
+  # Path to the markdown post starting at the root of the repository
+  attr_accessor :file_path
 end

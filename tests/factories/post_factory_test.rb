@@ -29,7 +29,7 @@ class PostFactoryTest < BaseGemTest
 
   def test_create_jekyll_item_should_return_nil_if_given_a_nil_value_for_post_contents
     # Act
-    result = @post_factory.create_jekyll_item(nil, nil, nil)
+    result = @post_factory.create_jekyll_item(nil, nil, nil, nil)
 
     # Assert
     assert_nil result
@@ -37,7 +37,7 @@ class PostFactoryTest < BaseGemTest
 
   def test_create_jekyll_item_should_return_nil_if_given_a_nonstring_type_for_post_contents
     # Act
-    result = @post_factory.create_jekyll_item(1, 'my post.md', 'https://example.com/pull/1')
+    result = @post_factory.create_jekyll_item(1, 'my post.md', 'ref', 'https://example.com/pull/1')
 
     # Assert
     assert_nil result
@@ -60,10 +60,11 @@ overlay: green
 ##An H2 tag)
 
     # Act
-    result = @post_factory.create_jekyll_item(post_contents, 'my post.md', 'https://example.com/pull/1')
+    result = @post_factory.create_jekyll_item(post_contents, 'my post.md', 'ref', 'https://example.com/pull/1')
 
     # Assert
     assert_equal 'my post.md', result.file_path
+    assert_equal 'ref', result.github_ref
     assert_equal 'https://example.com/pull/1', result.pull_request_url
     assert_equal 'Some Post', result.title
     assert_equal 'Andrew Wojciechowski', result.author
@@ -90,10 +91,11 @@ overlay: green\r
 ##An H2 tag)
 
     # Act
-    result = @post_factory.create_jekyll_item(post_contents, 'my post.md', 'https://example.com/pull/1')
+    result = @post_factory.create_jekyll_item(post_contents, 'my post.md', 'ref', 'https://example.com/pull/1')
 
     # Assert
     assert_equal 'my post.md', result.file_path
+    assert_equal 'ref', result.github_ref
     assert_equal 'https://example.com/pull/1', result.pull_request_url
     assert_equal "Some Post\r", result.title
     assert_equal "Andrew Wojciechowski\r", result.author

@@ -56,11 +56,11 @@ class JekyllItemServiceTest < BaseGemTest
                            .returns('post 3 text content')
 
     Factories::PostFactory.any_instance.expects(:create_jekyll_item)
-                          .with('post 1 text content', '_posts/post1.md', nil).returns(post1_model)
+                          .with('post 1 text content', '_posts/post1.md', nil, nil).returns(post1_model)
     Factories::PostFactory.any_instance.expects(:create_jekyll_item)
-                          .with('post 2 text content', '_posts/post2.md', nil).returns(post2_model)
+                          .with('post 2 text content', '_posts/post2.md', nil, nil).returns(post2_model)
     Factories::PostFactory.any_instance.expects(:create_jekyll_item)
-                          .with('post 3 text content', '_posts/post3.md', nil).returns(post3_model)
+                          .with('post 3 text content', '_posts/post3.md', nil, nil).returns(post3_model)
 
     item_service = create_jekyll_item_service(Factories::PostFactory.new)
 
@@ -85,7 +85,7 @@ class JekyllItemServiceTest < BaseGemTest
                            .with('_posts/post1.md')
                            .returns('post 1 text content')
     Factories::PostFactory.any_instance.expects(:create_jekyll_item)
-                          .with('post 1 text content', '_posts/post1.md', nil).returns(post_model)
+                          .with('post 1 text content', '_posts/post1.md', nil, nil).returns(post_model)
 
     item_service = create_jekyll_item_service(Factories::PostFactory.new)
 
@@ -116,7 +116,7 @@ class JekyllItemServiceTest < BaseGemTest
 
     Services::GithubService.any_instance.expects(:get_text_content_from_file).with('_posts/sample.md', 'myref').returns('PR content')
     Factories::PostFactory.any_instance.expects(:create_jekyll_item)
-                          .with('PR content', '_posts/sample.md', 'https://example.com/pull/1').returns(post_model)
+                          .with('PR content', '_posts/sample.md', 'myref', 'https://example.com/pull/1').returns(post_model)
 
     item_service = create_jekyll_item_service(Factories::PostFactory.new)
 
@@ -148,7 +148,7 @@ class JekyllItemServiceTest < BaseGemTest
 
     Services::GithubService.any_instance.expects(:get_text_content_from_file).with('_posts/sample.md', 'myref').returns('PR content')
     Factories::PostFactory.any_instance.expects(:create_jekyll_item)
-                          .with('PR content', '_posts/sample.md', 'https://example.com/pull/1').returns(post_model)
+                          .with('PR content', '_posts/sample.md', 'myref', 'https://example.com/pull/1').returns(post_model)
 
     item_service = create_jekyll_item_service(Factories::PostFactory.new)
 
@@ -191,7 +191,7 @@ class JekyllItemServiceTest < BaseGemTest
     page_model = create_page_model(title: 'About', permalink: '/about/', contents: 'text contents')
 
     Services::GithubService.any_instance.expects(:get_text_contents_from_file).with('about.md').returns('text contents')
-    Factories::PageFactory.any_instance.expects(:create_jekyll_item).with('text contents', nil, nil).returns(page_model)
+    Factories::PageFactory.any_instance.expects(:create_jekyll_item).with('text contents', nil, nil, nil).returns(page_model)
 
     jekyll_item_service = create_jekyll_item_service(Factories::PageFactory.new)
 
@@ -209,7 +209,7 @@ class JekyllItemServiceTest < BaseGemTest
 
     Services::GithubService.any_instance.expects(:get_open_pull_requests_with_body).with(pr_body).returns([])
     Services::GithubService.any_instance.expects(:get_text_contents_from_file).with('about.md').returns('text contents')
-    Factories::PageFactory.any_instance.expects(:create_jekyll_item).with('text contents', nil, nil).returns(page_model)
+    Factories::PageFactory.any_instance.expects(:create_jekyll_item).with('text contents', nil, nil, nil).returns(page_model)
 
     jekyll_item_service = create_jekyll_item_service(Factories::PageFactory.new)
 
@@ -235,7 +235,7 @@ class JekyllItemServiceTest < BaseGemTest
                                                                                   create_pull_request_file_hash('ref', 'myfile.csv')
                                                                                 ])
     Services::GithubService.any_instance.expects(:get_text_contents_from_file).with('about.md').returns('text contents')
-    Factories::PageFactory.any_instance.expects(:create_jekyll_item).with('text contents', nil, nil).returns(page_model)
+    Factories::PageFactory.any_instance.expects(:create_jekyll_item).with('text contents', nil, nil, nil).returns(page_model)
 
     jekyll_item_service = create_jekyll_item_service(Factories::PageFactory.new)
 
@@ -263,7 +263,7 @@ class JekyllItemServiceTest < BaseGemTest
                                                                                 ])
     Services::GithubService.any_instance.expects(:get_ref_from_contents_url).with('http://example.com?ref=ref').returns('ref')
     Services::GithubService.any_instance.expects(:get_text_contents_from_file).with('about.md', 'ref').returns('text contents')
-    Factories::PageFactory.any_instance.expects(:create_jekyll_item).with('text contents', 'ref', 'http://example.com/pulls/1').returns(page_model)
+    Factories::PageFactory.any_instance.expects(:create_jekyll_item).with('text contents', 'about.md', 'ref', 'http://example.com/pulls/1').returns(page_model)
 
     jekyll_item_service = create_jekyll_item_service(Factories::PageFactory.new)
 

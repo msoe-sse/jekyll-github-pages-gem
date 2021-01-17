@@ -9,10 +9,11 @@ module Factories
     #
     # Params:
     # +item_contents+::markdown in a given page
+    # +file_path+::the path on GitHub to the item
     # +github_ref+::a sha for a ref indicating the head of a branch a page is pushed to on the GitHub server
     # +pull_request_url+::a url to the pull request with the branch the pull request is pushed to on the GitHub server
-    def create_jekyll_item(item_contents, github_ref, pull_request_url)
-      create_page_model(item_contents, github_ref, pull_request_url) if !item_contents.nil? && item_contents.is_a?(String)
+    def create_jekyll_item(item_contents, file_path, github_ref, pull_request_url)
+      create_page_model(item_contents, file_path, github_ref, pull_request_url) if !item_contents.nil? && item_contents.is_a?(String)
     end
 
     ##
@@ -39,9 +40,10 @@ permalink: #{properties[:permalink]}
 
     private
 
-    def create_page_model(page_contents, github_ref, pull_request_url)
+    def create_page_model(page_contents, file_path, github_ref, pull_request_url)
       result = Page.new
-
+      
+      result.file_path = file_path
       result.github_ref = github_ref
       result.pull_request_url = pull_request_url
 
