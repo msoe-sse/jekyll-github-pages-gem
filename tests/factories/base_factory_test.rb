@@ -31,4 +31,11 @@ class BaseFactoryTest < BaseGemTest
       @base_factory.create_jekyll_item('contents', 'ref', 'url')
     end
   end
+
+  def test_create_jekyll_item_text_should_raise_not_implemented_error_when_not_implemented_in_subclasses
+    # Act / Assert
+    assert_raises NotImplementedError do
+      @base_factory.create_jekyll_item_text({ title: 'My Title' })
+    end
+  end
 end

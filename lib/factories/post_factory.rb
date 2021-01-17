@@ -40,40 +40,36 @@ module Factories
     # as a valid post for a Jekyll website
     #
     # Params:
-    # +text+:: the required markdown contents of the post
-    # +author+:: the required author of the post
-    # +title+:: the required title of the post
-    # +tags+:: optional tags specific to the post, defaults to nil
-    # +overlay+:: the optional overlay color of the post, defaults to nil
-    # +hero+:: a link to an optional background image for a post, defaults to nil
-    # +set_published_property+::an optional flag to set the published: true property for a post, defaults to false
-    # +append_lead_break_section+::an optional flag indicating whether to append to lead break section to a post, default to false
-    def create_jekyll_post_text(text, author, title, tags = nil, overlay = nil,
-                                hero = nil, set_published_property = false, append_lead_break_section = false)
-      header_converted_text = fix_header_syntax(text)
+    # +properties+:: A hash of all of the given properties for a post
+    def create_jekyll_item_text(properties)
+      raise ArgumentError.new 'A Jekyll post must have a title.' unless properties[:title]
+      raise ArgumentError.new 'A Jekyll post must have a author.' unless properties[:author]
+      raise ArgumentError.new 'A Jekyll post cannot be empty.' unless properties[:text]
+
+      header_converted_text = fix_header_syntax(properties[:text])
       header_converted_text = add_line_break_to_markdown_if_necessary(header_converted_text)
 
       parsed_tags = nil
-      parsed_tags = format_tags(tags) if tags
+      parsed_tags = format_tags(properties[:tags]) if properties[:tags]
 
       tag_section = %(tags:
 #{parsed_tags})
 
       lead_break_section = "{: .lead}\r\n<!–-break-–>"
 
-      hero_to_use = hero
+      hero_to_use = properties[:hero]
       hero_to_use = DEFAULT_HERO if hero_to_use&.empty?
       result = %(---
 layout: post
-title: #{title}
-author: #{author}\r\n)
+title: #{properties[:title]}
+author: #{properties[:author]}\r\n)
 
       result += "#{tag_section}\r\n" unless !parsed_tags || parsed_tags.empty?
       result += "hero: #{hero_to_use}\n" if hero_to_use
-      result += "overlay: #{overlay}\n" if overlay
-      result += "published: true\n" if set_published_property
+      result += "overlay: #{properties[:overlay]}\n" if properties[:overlay]
+      result += "published: true\n" if properties[:set_published_property]
       result += "---\n"
-      result += "#{lead_break_section}\n" if append_lead_break_section
+      result += "#{lead_break_section}\n" if properties[:append_lead_break_section]
       result += header_converted_text
 
       result

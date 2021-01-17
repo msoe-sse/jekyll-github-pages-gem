@@ -21,7 +21,7 @@ Metrics/ParameterLists:
     Max: 10
     
 Metrics/AbcSize:
-    Max: 30
+    Max: 35
     Exclude:
         - tests/**/*
 
@@ -47,10 +47,10 @@ Style/RaiseArgs:
     EnforcedStyle: compact
 
 Metrics/CyclomaticComplexity:
-    Max: 10
+    Max: 15
 
 Metrics/PerceivedComplexity:
-    Max: 10
+    Max: 15
 
 Layout/EmptyLinesAroundAttributeAccessor:
     Enabled: true

@@ -67,7 +67,37 @@ permalink: /about/\r
     assert_equal "#An H1 tag\r\n##An H2 tag", result.contents
   end
 
-  def test_create_jekyll_page_text_should_return_text_for_a_formatted_page
+  def test_create_jekyll_item_text_should_raise_argument_error_when_not_given_text
+    # Act / Assert
+    assert_raises ArgumentError do
+      @page_factory.create_jekyll_item_text({
+                                              title: 'About',
+                                              permalink: '/about//'
+                                            })
+    end
+  end
+
+  def test_create_jekyll_item_text_should_raise_argument_error_when_not_given_a_title
+    # Act / Assert
+    assert_raises ArgumentError do
+      @page_factory.create_jekyll_item_text({
+                                              text: "#An H1 tag\r\n##An H2 tag",
+                                              permalink: '/about//'
+                                            })
+    end
+  end
+
+  def test_create_jekyll_item_text_should_raise_argument_error_when_not_given_a_permalink
+    # Act / Assert
+    assert_raises ArgumentError do
+      @page_factory.create_jekyll_item_text({
+                                              text: "#An H1 tag\r\n##An H2 tag",
+                                              title: 'About'
+                                            })
+    end
+  end
+
+  def test_create_jekyll_item_text_should_return_text_for_a_formatted_page
     # Arrange
     expected_page = %(---
 layout: page
@@ -78,13 +108,17 @@ permalink: /about/
 ##An H2 tag)
 
     # Act
-    result = @page_factory.create_jekyll_page_text("#An H1 tag\r\n##An H2 tag", 'About', '/about/')
+    result = @page_factory.create_jekyll_item_text({
+                                                     text: "#An H1 tag\r\n##An H2 tag",
+                                                     title: 'About',
+                                                     permalink: '/about/'
+                                                   })
 
     # Assert
     assert_equal expected_page, result
   end
 
-  def test_create_jekyll_page_text_should_add_a_space_after_the_hash_symbol_indicating_header_tag
+  def test_create_jekyll_item_text_should_add_a_space_after_the_hash_symbol_indicating_header_tag
     # Arrange
     expected_page = %(---
 layout: page
@@ -116,13 +150,17 @@ permalink: /about/
 ######H6 header)
 
     # Act
-    result = @page_factory.create_jekyll_page_text(markdown_text, 'About', '/about/')
+    result = @page_factory.create_jekyll_item_text({
+                                                     text: markdown_text,
+                                                     title: 'About',
+                                                     permalink: '/about/'
+                                                   })
 
     # Assert
     assert_equal expected_page, result
   end
 
-  def test_create_jekyll_page_text_should_add_a_line_break_before_a_reference_style_img_if_markdown_starts_with_a_reference_style_img
+  def test_create_jekyll_item_text_should_add_a_line_break_before_a_reference_style_img_if_markdown_starts_with_a_reference_style_img
     # Arrange
     image_tag = "\r\n![alt text][logo]"
     markdown = "[logo]: https://ieeextreme.org/wp-content/uploads/2019/05/Xtreme_colour-e1557478323964.png#{image_tag}"
@@ -136,7 +174,11 @@ permalink: /about/
 #{markdown})
 
     # Act
-    result = @page_factory.create_jekyll_page_text(markdown, 'About', '/about/')
+    result = @page_factory.create_jekyll_item_text({
+                                                     text: markdown,
+                                                     title: 'About',
+                                                     permalink: '/about/'
+                                                   })
 
     # Assert
     assert_equal expected_page, result

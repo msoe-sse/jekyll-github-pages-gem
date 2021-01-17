@@ -20,17 +20,19 @@ module Factories
     # as a valid page for a Jekyll website
     #
     # Params:
-    # +text+:: the required markdown contents of the post
-    # +title+:: the required title of the post
-    # +permalink+:: the link to the page on a Jekyll website (e.g /about)
-    def create_jekyll_page_text(text, title, permalink)
-      header_converted_text = fix_header_syntax(text)
+    # +properties+:: A hash of all of the properties for the page
+    def create_jekyll_item_text(properties)
+      raise ArgumentError.new 'A Jekyll page must have a title.' unless properties[:title]
+      raise ArgumentError.new 'A Jekyll page must have a permalink.' unless properties[:permalink]
+      raise ArgumentError.new 'A Jekyll page cannot be empty.' unless properties[:text]
+
+      header_converted_text = fix_header_syntax(properties[:text])
       header_converted_text = add_line_break_to_markdown_if_necessary(header_converted_text)
 
       %(---
 layout: page
-title: #{title}
-permalink: #{permalink}
+title: #{properties[:title]}
+permalink: #{properties[:permalink]}
 ---
 #{header_converted_text})
     end

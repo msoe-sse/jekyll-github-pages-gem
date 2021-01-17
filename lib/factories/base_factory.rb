@@ -32,6 +32,16 @@ module Factories
       raise NotImplementedError
     end
 
+    #
+    # The default create_jekyll_item_text implementation. In order for this method to be called
+    # it must be defined and implemented in subclasses
+    #
+    # Params
+    # +properties+: A hash of all of the properties for the given item
+    def create_jekyll_item_text(_properties)
+      raise NotImplementedError
+    end
+
     protected
 
     def fix_header_syntax(text)
