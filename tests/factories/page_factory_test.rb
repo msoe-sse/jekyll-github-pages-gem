@@ -81,7 +81,7 @@ permalink: /about/\r
     # Act / Assert
     assert_raises ArgumentError do
       @page_factory.create_jekyll_item_text({
-                                              text: "#An H1 tag\r\n##An H2 tag",
+                                              contents: "#An H1 tag\r\n##An H2 tag",
                                               permalink: '/about//'
                                             })
     end
@@ -91,7 +91,7 @@ permalink: /about/\r
     # Act / Assert
     assert_raises ArgumentError do
       @page_factory.create_jekyll_item_text({
-                                              text: "#An H1 tag\r\n##An H2 tag",
+                                              contents: "#An H1 tag\r\n##An H2 tag",
                                               title: 'About'
                                             })
     end
@@ -109,7 +109,7 @@ permalink: /about/
 
     # Act
     result = @page_factory.create_jekyll_item_text({
-                                                     text: "#An H1 tag\r\n##An H2 tag",
+                                                     contents: "#An H1 tag\r\n##An H2 tag",
                                                      title: 'About',
                                                      permalink: '/about/'
                                                    })
@@ -151,7 +151,7 @@ permalink: /about/
 
     # Act
     result = @page_factory.create_jekyll_item_text({
-                                                     text: markdown_text,
+                                                     contents: markdown_text,
                                                      title: 'About',
                                                      permalink: '/about/'
                                                    })
@@ -175,7 +175,7 @@ permalink: /about/
 
     # Act
     result = @page_factory.create_jekyll_item_text({
-                                                     text: markdown,
+                                                     contents: markdown,
                                                      title: 'About',
                                                      permalink: '/about/'
                                                    })

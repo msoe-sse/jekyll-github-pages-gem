@@ -8,4 +8,5 @@ class JekyllItem
   # whether a page is in PR or not
   attr_accessor :github_ref
   attr_accessor :pull_request_url
+  attr_accessor :contents
 end

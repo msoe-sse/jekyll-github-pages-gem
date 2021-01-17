@@ -4,5 +4,4 @@
 # An object repsenting a page on a Jekyll website
 class Page < JekyllItem
   attr_accessor :permalink
-  attr_accessor :contents
 end

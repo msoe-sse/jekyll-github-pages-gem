@@ -44,9 +44,9 @@ module Factories
     def create_jekyll_item_text(properties)
       raise ArgumentError.new 'A Jekyll post must have a title.' unless properties[:title]
       raise ArgumentError.new 'A Jekyll post must have a author.' unless properties[:author]
-      raise ArgumentError.new 'A Jekyll post cannot be empty.' unless properties[:text]
+      raise ArgumentError.new 'A Jekyll post cannot be empty.' unless properties[:contents]
 
-      header_converted_text = fix_header_syntax(properties[:text])
+      header_converted_text = fix_header_syntax(properties[:contents])
       header_converted_text = add_line_break_to_markdown_if_necessary(header_converted_text)
 
       parsed_tags = nil

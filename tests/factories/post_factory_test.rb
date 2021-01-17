@@ -117,7 +117,7 @@ overlay: green\r
     # Act / Assert
     assert_raises ArgumentError do
       @post_factory.create_jekyll_item_text({
-                                              text: "#An H1 tag\r\n##An H2 tag",
+                                              contents: "#An H1 tag\r\n##An H2 tag",
                                               author: 'Andy Wojciechowski'
                                             })
     end
@@ -127,7 +127,7 @@ overlay: green\r
     # Act / Assert
     assert_raises ArgumentError do
       @post_factory.create_jekyll_item_text({
-                                              text: "#An H1 tag\r\n##An H2 tag",
+                                              contents: "#An H1 tag\r\n##An H2 tag",
                                               title: 'About'
                                             })
     end
@@ -149,7 +149,7 @@ published: true
 
     # Act
     result = @post_factory.create_jekyll_item_text({
-                                                     text: "#An H1 tag\r\n##An H2 tag",
+                                                     contents: "#An H1 tag\r\n##An H2 tag",
                                                      author: 'Andy Wojciechowski',
                                                      title: 'Some Post',
                                                      tags: '',
@@ -183,7 +183,7 @@ published: true
 
     # Act
     result = @post_factory.create_jekyll_item_text({
-                                                     text: "#An H1 tag\r\n##An H2 tag",
+                                                     contents: "#An H1 tag\r\n##An H2 tag",
                                                      author: 'Andy Wojciechowski',
                                                      title: 'Some Post',
                                                      tags: 'announcement, info,    hack n tell     ',
@@ -233,7 +233,7 @@ published: true
 
     # Act
     result = @post_factory.create_jekyll_item_text({
-                                                     text: markdown_text,
+                                                     contents: markdown_text,
                                                      author: 'Andy Wojciechowski',
                                                      title: 'Some Post',
                                                      tags: '',
@@ -266,7 +266,7 @@ published: true
 
     # Act
     result = @post_factory.create_jekyll_item_text({
-                                                     text: "#An H1 tag\r\n##An H2 tag",
+                                                     contents: "#An H1 tag\r\n##An H2 tag",
                                                      author: 'Andy Wojciechowski',
                                                      title: 'Some Post',
                                                      tags: 'announcement, info',
@@ -299,7 +299,7 @@ published: true
 
     # Act
     result = @post_factory.create_jekyll_item_text({
-                                                     text: "#An H1 tag\r\n##An H2 tag",
+                                                     contents: "#An H1 tag\r\n##An H2 tag",
                                                      author: 'Andy Wojciechowski',
                                                      title: 'Some Post',
                                                      tags: 'announcement, info',
@@ -335,7 +335,7 @@ published: true
 
     # Act
     result = @post_factory.create_jekyll_item_text({
-                                                     text: markdown,
+                                                     contents: markdown,
                                                      author: 'Andy Wojciechowski',
                                                      title: 'Some Post',
                                                      tags: 'announcement, info',
@@ -362,7 +362,7 @@ author: Andy Wojciechowski\r
     result = @post_factory.create_jekyll_item_text({
                                                      title: 'Some Post',
                                                      author: 'Andy Wojciechowski',
-                                                     text: '# An H1 Tag'
+                                                     contents: '# An H1 Tag'
                                                    })
 
     # Assert

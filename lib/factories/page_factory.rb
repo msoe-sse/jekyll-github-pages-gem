@@ -24,9 +24,9 @@ module Factories
     def create_jekyll_item_text(properties)
       raise ArgumentError.new 'A Jekyll page must have a title.' unless properties[:title]
       raise ArgumentError.new 'A Jekyll page must have a permalink.' unless properties[:permalink]
-      raise ArgumentError.new 'A Jekyll page cannot be empty.' unless properties[:text]
+      raise ArgumentError.new 'A Jekyll page cannot be empty.' unless properties[:contents]
 
-      header_converted_text = fix_header_syntax(properties[:text])
+      header_converted_text = fix_header_syntax(properties[:contents])
       header_converted_text = add_line_break_to_markdown_if_necessary(header_converted_text)
 
       %(---
