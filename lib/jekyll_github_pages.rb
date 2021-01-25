@@ -11,3 +11,4 @@ require 'factories/page_factory'
 
 require 'services/github_service'
 require 'services/jekyll_item_service'
+require 'services/jekyll_data_service'

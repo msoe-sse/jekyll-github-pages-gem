@@ -16,6 +16,8 @@ gem 'rake'
 
 gem 'rdoc'
 
+gem 'yaml', '~> 0.1.1'
+
 group :test do
   gem 'minitest'
   gem 'mocha'

@@ -10,5 +10,6 @@ Gem::Specification.new do |s|
   s.authors = ['MSOE SSE Web Team']
   s.add_runtime_dependency('kramdown', '~> 2.3.0')
   s.add_runtime_dependency('octokit', '~> 4.18')
+  s.add_runtime_dependency('yaml', '~> 0.1.1')
   s.required_ruby_version = '>= 2.5.1'
 end

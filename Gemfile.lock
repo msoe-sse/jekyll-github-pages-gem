@@ -4,6 +4,7 @@ PATH
     jekyll-github-pages-gem (1.1.3)
       kramdown (~> 2.3.0)
       octokit (~> 4.18)
+      yaml (~> 0.1.1)
 
 GEM
   remote: https://rubygems.org/
@@ -53,6 +54,7 @@ GEM
     simplecov-html (0.12.3)
     simplecov_json_formatter (0.1.2)
     unicode-display_width (1.7.0)
+    yaml (0.1.1)
 
 PLATFORMS
   x64-mingw32
@@ -68,6 +70,7 @@ DEPENDENCIES
   rdoc
   rubocop (~> 0.71)
   simplecov
+  yaml (~> 0.1.1)
 
 BUNDLED WITH
-   2.1.4
+   2.2.5
